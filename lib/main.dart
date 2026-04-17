@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/home_screen.dart';
 import 'features/treino/treino_screen.dart';
+import 'features/chatbot/chatbot_screen.dart';
 
 void main() {
   runApp(const PatriqueApp());
@@ -13,7 +14,7 @@ class PatriqueApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pratique Fitness',
+      title: 'Patrique Fitness',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       home: const MainScreen(),
@@ -34,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     HomeScreen(),
     const TreinoScreen(),
-    Center(child: Text('Chatbot')),
+    const ChatbotScreen(),
     Center(child: Text('Perfil')),
   ];
 
