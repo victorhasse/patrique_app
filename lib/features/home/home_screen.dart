@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import 'calendario_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Olá, Victor! 👋',
+                          'Olá, Fulano! 👋',
                           style: Theme.of(context).textTheme.headlineMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -76,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '7 dias seguidos!',
+                            '5 dias seguidos!',
                             style: Theme.of(context).textTheme.titleLarge,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -105,7 +106,32 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _SemanaWidget(),
-
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CalendarioScreen()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Ver calendário completo →',
+                      style: TextStyle(
+                        color: AppTheme.primary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 28),
 
               // Próximo treino

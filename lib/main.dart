@@ -3,6 +3,7 @@ import 'core/theme/app_theme.dart';
 import 'features/home/home_screen.dart';
 import 'features/treino/treino_screen.dart';
 import 'features/chatbot/chatbot_screen.dart';
+import 'features/perfil/perfil_screen.dart';
 
 void main() {
   runApp(const PatriqueApp());
@@ -34,9 +35,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = const [
     HomeScreen(),
-    const TreinoScreen(),
-    const ChatbotScreen(),
-    Center(child: Text('Perfil')),
+    TreinoScreen(),
+    ChatbotScreen(),
+    PerfilScreen(),
   ];
 
   @override
