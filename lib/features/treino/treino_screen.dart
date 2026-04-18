@@ -1,8 +1,127 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import 'detalhe_treino_screen.dart';
 
 class TreinoScreen extends StatelessWidget {
   const TreinoScreen({super.key});
+
+  // Base de exercícios com videoId do YouTube
+  static final List<Map<String, dynamic>> _treinoA = [
+    {
+      'nome': 'Supino Reto',
+      'descricao': 'Exercício composto para peitoral maior, deltóide anterior e tríceps.',
+      'series': 4,
+      'repeticoes': '10-12',
+      'carga': '60kg',
+      'intervalo': 2,
+      'videoId': 'rT7DgCr-3pg',
+    },
+    {
+      'nome': 'Supino Inclinado',
+      'descricao': 'Foca na porção superior do peitoral com maior amplitude.',
+      'series': 3,
+      'repeticoes': '10-12',
+      'carga': '50kg',
+      'intervalo': 2,
+      'videoId': 'DbFgADa2PL8',
+    },
+    {
+      'nome': 'Crucifixo',
+      'descricao': 'Isolamento do peitoral com movimento de abertura dos braços.',
+      'series': 3,
+      'repeticoes': '12-15',
+      'carga': '14kg',
+      'intervalo': 1,
+      'videoId': 'eozdVDA78K0',
+    },
+    {
+      'nome': 'Tríceps Pulley',
+      'descricao': 'Isolamento do tríceps com cabo, excelente para definição.',
+      'series': 4,
+      'repeticoes': '12-15',
+      'carga': '30kg',
+      'intervalo': 1,
+      'videoId': '2-LAMcpzODU',
+    },
+  ];
+
+  static final List<Map<String, dynamic>> _treinoB = [
+    {
+      'nome': 'Puxada Frontal',
+      'descricao': 'Exercício composto para grande dorsal e bíceps.',
+      'series': 4,
+      'repeticoes': '10-12',
+      'carga': '70kg',
+      'intervalo': 2,
+      'videoId': 'CAwf7n6Luuc',
+    },
+    {
+      'nome': 'Remada Curvada',
+      'descricao': 'Fortalece o dorsal, romboides e trapézio médio.',
+      'series': 4,
+      'repeticoes': '10-12',
+      'carga': '60kg',
+      'intervalo': 2,
+      'videoId': 'kBWAon7ItDw',
+    },
+    {
+      'nome': 'Rosca Direta',
+      'descricao': 'Isolamento clássico do bíceps braquial.',
+      'series': 3,
+      'repeticoes': '12-15',
+      'carga': '20kg',
+      'intervalo': 1,
+      'videoId': 'ykJmrZ5v0Oo',
+    },
+    {
+      'nome': 'Rosca Martelo',
+      'descricao': 'Trabalha bíceps e braquiorradial com pegada neutra.',
+      'series': 3,
+      'repeticoes': '12-15',
+      'carga': '16kg',
+      'intervalo': 1,
+      'videoId': 'zC3nLlEvin4',
+    },
+  ];
+
+  static final List<Map<String, dynamic>> _treinoC = [
+    {
+      'nome': 'Agachamento Livre',
+      'descricao': 'Rei dos exercícios — quadríceps, glúteos e posterior de coxa.',
+      'series': 4,
+      'repeticoes': '8-10',
+      'carga': '80kg',
+      'intervalo': 3,
+      'videoId': 'ultWZbUMPL8',
+    },
+    {
+      'nome': 'Leg Press',
+      'descricao': 'Fortalece quadríceps e glúteos com menor risco para coluna.',
+      'series': 4,
+      'repeticoes': '12-15',
+      'carga': '150kg',
+      'intervalo': 2,
+      'videoId': 'IZxyjW7MPJQ',
+    },
+    {
+      'nome': 'Desenvolvimento',
+      'descricao': 'Exercício composto para deltóides anterior e lateral.',
+      'series': 4,
+      'repeticoes': '10-12',
+      'carga': '40kg',
+      'intervalo': 2,
+      'videoId': 'qEwKCR5JCog',
+    },
+    {
+      'nome': 'Elevação Lateral',
+      'descricao': 'Isolamento do deltóide lateral para ombros mais largos.',
+      'series': 3,
+      'repeticoes': '12-15',
+      'carga': '10kg',
+      'intervalo': 1,
+      'videoId': '3VcKaXpzqRo',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -14,66 +133,33 @@ class TreinoScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-
-              // Header
-              Text(
-                'Meus Treinos',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              Text('Meus Treinos',
+                  style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 4),
-              Text(
-                'Selecione um treino para começar',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-
+              Text('Selecione um treino para começar',
+                  style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 24),
 
-              // Cards de treino
               _CardGrupoMuscular(
                 letra: 'A',
                 titulo: 'Peito e Tríceps',
-                exercicios: const [
-                  'Supino reto',
-                  'Supino inclinado',
-                  'Crucifixo',
-                  'Tríceps pulley',
-                  'Tríceps testa',
-                  'Mergulho',
-                ],
+                exercicios: _treinoA,
                 cor: AppTheme.primary,
               ),
-
               const SizedBox(height: 16),
-
               _CardGrupoMuscular(
                 letra: 'B',
                 titulo: 'Costas e Bíceps',
-                exercicios: const [
-                  'Puxada frontal',
-                  'Remada curvada',
-                  'Remada unilateral',
-                  'Rosca direta',
-                  'Rosca martelo',
-                ],
+                exercicios: _treinoB,
                 cor: const Color(0xFF7C3AED),
               ),
-
               const SizedBox(height: 16),
-
               _CardGrupoMuscular(
                 letra: 'C',
                 titulo: 'Pernas e Ombros',
-                exercicios: const [
-                  'Agachamento',
-                  'Leg press',
-                  'Cadeira extensora',
-                  'Desenvolvimento',
-                  'Elevação lateral',
-                  'Panturrilha',
-                ],
+                exercicios: _treinoC,
                 cor: const Color(0xFF059669),
               ),
-
               const SizedBox(height: 32),
             ],
           ),
@@ -83,10 +169,10 @@ class TreinoScreen extends StatelessWidget {
   }
 }
 
-class _CardGrupoMuscular extends StatefulWidget {
+class _CardGrupoMuscular extends StatelessWidget {
   final String letra;
   final String titulo;
-  final List<String> exercicios;
+  final List<Map<String, dynamic>> exercicios;
   final Color cor;
 
   const _CardGrupoMuscular({
@@ -97,139 +183,65 @@ class _CardGrupoMuscular extends StatefulWidget {
   });
 
   @override
-  State<_CardGrupoMuscular> createState() => _CardGrupoMuscularState();
-}
-
-class _CardGrupoMuscularState extends State<_CardGrupoMuscular> {
-  bool _expandido = false;
-  final List<bool> _concluidos = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _concluidos.addAll(
-      List.generate(widget.exercicios.length, (_) => false),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final concluidos = _concluidos.where((c) => c).length;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          // Header do card
-          InkWell(
-            onTap: () => setState(() => _expandido = !_expandido),
-            borderRadius: BorderRadius.circular(16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetalheTreinoScreen(
+              titulo: titulo,
+              cor: cor,
+              exercicios: exercicios,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppTheme.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: cor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text(
+                  letra,
+                  style: TextStyle(
+                    color: cor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Letra do treino
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: widget.cor.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        widget.letra,
-                        style: TextStyle(
-                          color: widget.cor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-
-                  // Título e progresso
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.titulo,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '$concluidos/${widget.exercicios.length} exercícios',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Seta expandir
-                  Icon(
-                    _expandido
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
-                    color: AppTheme.grey,
+                  Text(titulo,
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${exercicios.length} exercícios',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
             ),
-          ),
-
-          // Barra de progresso
-          if (concluidos > 0)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: LinearProgressIndicator(
-                value: concluidos / widget.exercicios.length,
-                backgroundColor: AppTheme.background,
-                valueColor: AlwaysStoppedAnimation<Color>(widget.cor),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-
-          // Lista de exercícios expandida
-          if (_expandido) ...[
-            const Divider(color: AppTheme.background, height: 1),
-            ...List.generate(widget.exercicios.length, (i) {
-              return CheckboxListTile(
-                value: _concluidos[i],
-                onChanged: (val) =>
-                    setState(() => _concluidos[i] = val ?? false),
-                activeColor: widget.cor,
-                title: Text(
-                  widget.exercicios[i],
-                  style: TextStyle(
-                    color: _concluidos[i] ? AppTheme.grey : AppTheme.white,
-                    decoration:
-                        _concluidos[i] ? TextDecoration.lineThrough : null,
-                    fontSize: 15,
-                  ),
-                ),
-                controlAffinity: ListTileControlAffinity.trailing,
-              );
-            }),
-            const SizedBox(height: 8),
-
-            // Botão iniciar treino
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.cor,
-                ),
-                child: const Text('Iniciar treino'),
-              ),
-            ),
+            Icon(Icons.arrow_forward_ios_rounded,
+                color: cor, size: 18),
           ],
-        ],
+        ),
       ),
     );
   }
