@@ -126,14 +126,8 @@ class PerfilScreen extends StatelessWidget {
                 itens: [
                   _ItemMenu(
                     icone: Icons.person_outline_rounded,
-                    label: 'Meu plano',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const PlanosScreen()),
-                      );
-                    },
+                    label: 'Meu perfil',
+                    onTap: () {},
                   ),
                   _ItemMenu(
                     icone: Icons.lock_outline_rounded,
@@ -143,7 +137,13 @@ class PerfilScreen extends StatelessWidget {
                   _ItemMenu(
                     icone: Icons.credit_card_rounded,
                     label: 'Meu plano',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const PlanosScreen()),
+                      );
+                    },
                   ),
                 ],
               ),
