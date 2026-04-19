@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import 'executar_treino_screen.dart';
+import '../../core/theme/app_transitions.dart';
 
 class DetalheTreinoScreen extends StatelessWidget {
   final String titulo;
@@ -149,8 +150,7 @@ class DetalheTreinoScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => ExecutarTreinoScreen(
+                  AppTransitions.slideFromBottom(ExecutarTreinoScreen(
                       titulo: titulo,
                       cor: cor,
                       exercicios: exercicios,

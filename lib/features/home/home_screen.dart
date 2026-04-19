@@ -1,164 +1,195 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_transitions.dart';
 import 'calendario_screen.dart';
+import 'home_shimmer.dart';
+import '../../shared/widgets/animated_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Simula carregamento de dados
+    Future.delayed(const Duration(milliseconds: 1800), () {
+      if (mounted) setState(() => _carregando = false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: _carregando ? const HomeShimmer() : _HomeConteudo(),
+      ),
+    );
+  }
+}
+
+class _HomeConteudo extends StatelessWidget {
+  const _HomeConteudo();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(height: 24),
-
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Olá, Fulano! 👋',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Pronto para treinar hoje?',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.person_rounded,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 28),
-
-              // Card de streak
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppTheme.primaryDark, AppTheme.primary],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('🔥', style: TextStyle(fontSize: 40)),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '5 dias seguidos!',
-                            style: Theme.of(context).textTheme.titleLarge,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Continue assim, não perca seu streak!',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(color: AppTheme.primaryLight),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+                    Text(
+                      'Olá, Fulano! 👋',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Pronto para treinar hoje?',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 28),
-
-              // Dias da semana
-              Text(
-                'Sua semana',
-                style: Theme.of(context).textTheme.titleLarge,
+              const SizedBox(width: 12),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.person_rounded,
+                    color: Colors.white),
               ),
-              const SizedBox(height: 12),
-              _SemanaWidget(),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CalendarioScreen()),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Ver calendário completo →',
-                      style: TextStyle(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+            ],
+          ),
+
+          const SizedBox(height: 28),
+
+          // Card streak
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primaryDark, AppTheme.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                const Text('🔥', style: TextStyle(fontSize: 40)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '5 dias seguidos!',
+                        style: Theme.of(context).textTheme.titleLarge,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Continue assim, não perca seu streak!',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: AppTheme.primaryLight),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          // Dias da semana
+          Text('Sua semana',
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          _SemanaWidget(),
+
+          const SizedBox(height: 12),
+
+          // Botão calendário
+          AnimatedButton(
+            onTap: () {
+              Navigator.push(
+                context,
+                AppTransitions.slideFromBottom(const CalendarioScreen()),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Text(
+                  'Ver calendário completo →',
+                  style: TextStyle(
+                    color: AppTheme.primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
-
-              // Próximo treino
-              Text(
-                'Próximo treino',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              const _CardTreino(
-                titulo: 'Peito e Tríceps',
-                exercicios: '6 exercícios',
-                duracao: '45 min',
-                icone: Icons.fitness_center_rounded,
-              ),
-
-              const SizedBox(height: 16),
-              const _CardTreino(
-                titulo: 'Costas e Bíceps',
-                exercicios: '5 exercícios',
-                duracao: '40 min',
-                icone: Icons.sports_gymnastics_rounded,
-              ),
-
-              const SizedBox(height: 32),
-            ],
+            ),
           ),
-        ),
+
+          const SizedBox(height: 28),
+
+          // Próximo treino
+          Text('Próximo treino',
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          AnimatedButton(
+            onTap: () {},
+            child: const _CardTreino(
+              titulo: 'Peito e Tríceps',
+              exercicios: '6 exercícios',
+              duracao: '45 min',
+              icone: Icons.fitness_center_rounded,
+            ),
+          ),
+          const SizedBox(height: 16),
+          AnimatedButton(
+            onTap: () {},
+            child: const _CardTreino(
+              titulo: 'Costas e Bíceps',
+              exercicios: '5 exercícios',
+              duracao: '40 min',
+              icone: Icons.sports_gymnastics_rounded,
+            ),
+          ),
+
+          const SizedBox(height: 32),
+        ],
       ),
     );
   }
@@ -207,7 +238,8 @@ class _SemanaWidget extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               d['dia'],
-              style: const TextStyle(color: AppTheme.grey, fontSize: 11),
+              style:
+                  const TextStyle(color: AppTheme.grey, fontSize: 11),
             ),
           ],
         );
@@ -253,11 +285,8 @@ class _CardTreino extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  titulo,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(titulo,
+                    style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 4),
                 Text(
                   '$exercicios · $duracao',

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:patrique_app/core/theme/app_transitions.dart';
 import '../../core/theme/app_theme.dart';
 import 'login_screen.dart';
+import '../../core/theme/app_transitions.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          AppTransitions.fadeScale(const LoginScreen()),
         );
       }
     });

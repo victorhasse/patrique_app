@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../auth/planos_screen.dart';
+import '../../core/theme/app_transitions.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -140,8 +141,7 @@ class PerfilScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const PlanosScreen()),
+                        AppTransitions.slideFromRight(const PlanosScreen()),
                       );
                     },
                   ),

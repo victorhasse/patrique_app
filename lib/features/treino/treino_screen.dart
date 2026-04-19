@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import 'detalhe_treino_screen.dart';
+import '../../core/theme/app_transitions.dart';
+import '../../shared/widgets/animated_button.dart';
 
 class TreinoScreen extends StatelessWidget {
   const TreinoScreen({super.key});
@@ -184,12 +186,12 @@ class _CardGrupoMuscular extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return AnimatedButton(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => DetalheTreinoScreen(
+          AppTransitions.slideFromRight(
+            DetalheTreinoScreen(
               titulo: titulo,
               cor: cor,
               exercicios: exercicios,

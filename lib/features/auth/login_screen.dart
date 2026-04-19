@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import 'register_screen.dart';
 import '../../../main.dart';
+import '../../core/theme/app_transitions.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -128,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const MainScreen()),
+                    AppTransitions.slideFromRight(const RegisterScreen()),
                   );
                 },
                 child: const Text('Entrar'),
