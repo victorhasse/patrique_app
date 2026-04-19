@@ -44,9 +44,9 @@ class DetalheTreinoScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: cor.withOpacity(0.15),
+                color: cor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: cor.withOpacity(0.4)),
+                border: Border.all(color: cor.withValues(alpha: 0.4)),
               ),
               child: Row(
                 children: [
@@ -102,7 +102,7 @@ class DetalheTreinoScreen extends StatelessWidget {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: cor.withOpacity(0.15),
+                        color: cor.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: Center(

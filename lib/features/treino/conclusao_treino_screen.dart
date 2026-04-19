@@ -85,7 +85,7 @@ class _ConclusaoTreinoScreenState extends State<ConclusaoTreinoScreen>
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: widget.cor.withOpacity(0.15),
+                    color: widget.cor.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                     border: Border.all(color: widget.cor, width: 2),
                   ),

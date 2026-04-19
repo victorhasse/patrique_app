@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:patrique_app/core/theme/app_transitions.dart';
 import '../../core/theme/app_theme.dart';
 import 'login_screen.dart';
 import '../../core/theme/app_transitions.dart';

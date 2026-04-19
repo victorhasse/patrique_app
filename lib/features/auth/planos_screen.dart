@@ -39,7 +39,7 @@ class _PlanosScreenState extends State<PlanosScreen> {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.15),
+                        color: AppTheme.primary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(color: AppTheme.primary),
                       ),
@@ -219,7 +219,7 @@ class _CardPlano extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: selecionado
-              ? AppTheme.primary.withOpacity(0.1)
+              ? AppTheme.primary.withValues(alpha: 0.1)
               : AppTheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -339,7 +339,7 @@ class _ItemBeneficio extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: AppTheme.primary.withOpacity(0.15),
+              color: AppTheme.primary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(

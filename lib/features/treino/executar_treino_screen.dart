@@ -280,7 +280,7 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                             color: AppTheme.surface,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                                color: widget.cor.withOpacity(0.4)),
+                                color: widget.cor.withValues(alpha: 0.4)),
                           ),
                           child: Column(
                             children: [

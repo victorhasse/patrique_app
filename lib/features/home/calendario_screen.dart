@@ -232,7 +232,7 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                           color: treinado
                               ? AppTheme.primary
                               : hoje
-                                  ? AppTheme.primary.withOpacity(0.2)
+                                  ? AppTheme.primary.withValues(alpha: 0.2)
                                   : Colors.transparent,
                           shape: BoxShape.circle,
                           border: hoje && !treinado
@@ -276,7 +276,7 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                 ),
                 const SizedBox(width: 24),
                 _LegendaItem(
-                  cor: AppTheme.primary.withOpacity(0.2),
+                  cor: AppTheme.primary.withValues(alpha: 0.2),
                   label: 'Hoje',
                   borda: true,
                 ),
@@ -315,7 +315,7 @@ class _CardStat extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: destaque
-            ? AppTheme.primary.withOpacity(0.15)
+            ? AppTheme.primary.withValues(alpha: 0.15)
             : AppTheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: destaque
