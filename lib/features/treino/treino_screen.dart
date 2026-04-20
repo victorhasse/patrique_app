@@ -3,11 +3,11 @@ import '../../core/theme/app_theme.dart';
 import 'detalhe_treino_screen.dart';
 import '../../core/theme/app_transitions.dart';
 import '../../shared/widgets/animated_button.dart';
+import 'criar_treino_screen.dart';
 
 class TreinoScreen extends StatelessWidget {
   const TreinoScreen({super.key});
 
-  // Base de exercícios com videoId do YouTube
   static final List<Map<String, dynamic>> _treinoA = [
     {
       'nome': 'Supino Reto',
@@ -128,6 +128,23 @@ class TreinoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            AppTransitions.slideFromBottom(const CriarTreinoScreen()),
+          );
+        },
+        backgroundColor: AppTheme.primary,
+        icon: const Icon(Icons.add_rounded, color: Colors.white),
+        label: const Text(
+          'Novo treino',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -141,7 +158,6 @@ class TreinoScreen extends StatelessWidget {
               Text('Selecione um treino para começar',
                   style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 24),
-
               _CardGrupoMuscular(
                 letra: 'A',
                 titulo: 'Peito e Tríceps',
@@ -162,7 +178,7 @@ class TreinoScreen extends StatelessWidget {
                 exercicios: _treinoC,
                 cor: const Color(0xFF059669),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 100),
             ],
           ),
         ),
@@ -211,7 +227,7 @@ class _CardGrupoMuscular extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: cor.withValues(alpha: 0.15),
+                color: cor.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
