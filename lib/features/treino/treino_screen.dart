@@ -227,7 +227,7 @@ class _CardGrupoMuscular extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: cor.withOpacity(0.15),
+                color: cor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
