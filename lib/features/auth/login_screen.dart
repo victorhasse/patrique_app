@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
-import 'register_screen.dart';
 import '../../core/theme/app_transitions.dart';
+import 'register_screen.dart';
+import '../../../main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,6 +21,25 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _senhaController.dispose();
     super.dispose();
+  }
+
+  void _entrar() {
+    // Por enquanto aceita qualquer email/senha preenchidos
+    if (_emailController.text.isEmpty || _senhaController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha o e-mail e a senha'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      AppTransitions.fadeScale(const MainScreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -67,42 +87,41 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 48),
 
               // Campo email
-              Text(
-                'E-mail',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('E-mail',
+                  style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   hintText: 'seu@email.com',
-                  prefixIcon: Icon(Icons.email_outlined, color: AppTheme.grey),
+                  prefixIcon:
+                      Icon(Icons.email_outlined, color: AppTheme.grey),
                 ),
               ),
 
               const SizedBox(height: 20),
 
               // Campo senha
-              Text(
-                'Senha',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('Senha',
+                  style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _senhaController,
                 obscureText: !_senhaVisivel,
                 decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon: const Icon(Icons.lock_outlined, color: AppTheme.grey),
+                  prefixIcon: const Icon(Icons.lock_outlined,
+                      color: AppTheme.grey),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _senhaVisivel ? Icons.visibility_off : Icons.visibility,
+                      _senhaVisivel
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: AppTheme.grey,
                     ),
-                    onPressed: () {
-                      setState(() => _senhaVisivel = !_senhaVisivel);
-                    },
+                    onPressed: () =>
+                        setState(() => _senhaVisivel = !_senhaVisivel),
                   ),
                 ),
               ),
@@ -125,12 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Botão entrar
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    AppTransitions.slideFromRight(const RegisterScreen()),
-                  );
-                },
+                onPressed: _entrar,
                 child: const Text('Entrar'),
               ),
 
@@ -158,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    AppTransitions.slideFromRight(const RegisterScreen()),
                   );
                 },
                 style: OutlinedButton.styleFrom(
@@ -171,7 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Text(
                   'Criar conta',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
 

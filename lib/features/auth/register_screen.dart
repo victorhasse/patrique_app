@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_transitions.dart';
+import '../../../main.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -24,6 +26,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  void _cadastrar() {
+    if (_nomeController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _senhaController.text.isEmpty ||
+        _confirmarSenhaController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (_senhaController.text != _confirmarSenhaController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('As senhas não coincidem'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    // Cadastro bem sucedido — vai para o app
+    Navigator.pushAndRemoveUntil(
+      context,
+      AppTransitions.fadeScale(const MainScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +65,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: AppTheme.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: AppTheme.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              color: AppTheme.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -43,16 +78,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               const SizedBox(height: 16),
 
-              // Título
-              Text(
-                'Criar conta',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              Text('Criar conta',
+                  style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 8),
-              Text(
-                'Preencha os dados para começar',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              Text('Preencha os dados para começar',
+                  style: Theme.of(context).textTheme.bodyMedium),
 
               const SizedBox(height: 36),
 
@@ -65,15 +95,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 textCapitalization: TextCapitalization.words,
                 decoration: const InputDecoration(
                   hintText: 'Seu nome',
-                  prefixIcon:
-                      Icon(Icons.person_outline_rounded, color: AppTheme.grey),
+                  prefixIcon: Icon(Icons.person_outline_rounded,
+                      color: AppTheme.grey),
                 ),
               ),
 
               const SizedBox(height: 20),
 
               // Email
-              Text('E-mail', style: Theme.of(context).textTheme.titleMedium),
+              Text('E-mail',
+                  style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
@@ -88,15 +119,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
 
               // Senha
-              Text('Senha', style: Theme.of(context).textTheme.titleMedium),
+              Text('Senha',
+                  style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _senhaController,
                 obscureText: !_senhaVisivel,
                 decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon:
-                      const Icon(Icons.lock_outlined, color: AppTheme.grey),
+                  prefixIcon: const Icon(Icons.lock_outlined,
+                      color: AppTheme.grey),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _senhaVisivel
@@ -130,7 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               // Botão cadastrar
               ElevatedButton(
-                onPressed: () {},
+                onPressed: _cadastrar,
                 child: const Text('Cadastrar'),
               ),
 

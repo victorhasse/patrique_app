@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../auth/planos_screen.dart';
 import '../../core/theme/app_transitions.dart';
+import '../auth/login_screen.dart';
+import 'notificacoes_screen.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -156,7 +158,13 @@ class PerfilScreen extends StatelessWidget {
                   _ItemMenu(
                     icone: Icons.notifications_outlined,
                     label: 'Notificações',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        AppTransitions.slideFromRight(
+                            const NotificacoesScreen()),
+                      );
+                    },
                   ),
                   _ItemMenu(
                     icone: Icons.language_rounded,
@@ -188,7 +196,13 @@ class PerfilScreen extends StatelessWidget {
 
               // Botão sair
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    AppTransitions.fadeScale(const LoginScreen()),
+                    (route) => false,
+                  );
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.redAccent,
                   minimumSize: const Size(double.infinity, 52),

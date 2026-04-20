@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
-import 'login_screen.dart';
 import '../../core/theme/app_transitions.dart';
+import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,15 +35,17 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navega para o login após 2.5 segundos
     Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          AppTransitions.fadeScale(const LoginScreen()),
-        );
-      }
+      _verificarOnboarding();
     });
+  }
+
+  Future<void> _verificarOnboarding() async {
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      AppTransitions.fadeScale(const OnboardingScreen()),
+    );
   }
 
   @override
@@ -64,7 +66,6 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo
                 Container(
                   width: 100,
                   height: 100,
@@ -80,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Pratique Fitness',
+                  'Patrique Fitness',
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 8),

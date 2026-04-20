@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^17.2.4
+  shared_preferences: ^2.5.5
   shimmer: ^3.0.0
   youtube_player_flutter: ^9.1.3
 
