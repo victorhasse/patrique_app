@@ -4,6 +4,7 @@ import '../auth/planos_screen.dart';
 import '../../core/theme/app_transitions.dart';
 import '../auth/login_screen.dart';
 import 'notificacoes_screen.dart';
+import 'editar_perfil_screen.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -23,7 +24,16 @@ class PerfilScreen extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    Stack(
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          AppTransitions.slideFromRight(
+                            const EditarPerfilScreen(),
+                          ),
+                        );
+                      },
+                      child: Stack(
                       children: [
                         Container(
                           width: 90,
@@ -56,6 +66,7 @@ class PerfilScreen extends StatelessWidget {
                           ),
                         ),
                       ],
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -130,7 +141,13 @@ class PerfilScreen extends StatelessWidget {
                   _ItemMenu(
                     icone: Icons.person_outline_rounded,
                     label: 'Meu perfil',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        AppTransitions.slideFromRight(
+                            const EditarPerfilScreen()),
+                      );
+                    },
                   ),
                   _ItemMenu(
                     icone: Icons.lock_outline_rounded,
