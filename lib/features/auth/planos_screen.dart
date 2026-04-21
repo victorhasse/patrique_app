@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme_utils.dart';
 
 class PlanosScreen extends StatefulWidget {
   const PlanosScreen({super.key});
@@ -15,11 +16,11 @@ class _PlanosScreenState extends State<PlanosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.white),
+          icon: Icon(Icons.arrow_back_ios_rounded,
+              color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -143,7 +144,7 @@ class _PlanosScreenState extends State<PlanosScreen> {
   void _mostrarConfirmacao(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: context.bgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -156,7 +157,7 @@ class _PlanosScreenState extends State<PlanosScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppTheme.grey,
+                color: context.subtitleColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -220,7 +221,7 @@ class _CardPlano extends StatelessWidget {
         decoration: BoxDecoration(
           color: selecionado
               ? AppTheme.primary.withValues(alpha: 0.1)
-              : AppTheme.surface,
+              : context.cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selecionado ? AppTheme.primary : Colors.transparent,
@@ -236,7 +237,7 @@ class _CardPlano extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: selecionado ? AppTheme.primary : AppTheme.grey,
+                  color: selecionado ? AppTheme.primary : context.subtitleColor,
                   width: 2,
                 ),
               ),
@@ -304,15 +305,15 @@ class _CardPlano extends StatelessWidget {
                 Text(
                   preco,
                   style: TextStyle(
-                    color: selecionado ? AppTheme.primary : AppTheme.white,
+                    color: selecionado ? AppTheme.primary : context.textColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   periodo,
-                  style: const TextStyle(
-                    color: AppTheme.grey,
+                  style: TextStyle(
+                    color: context.subtitleColor,
                     fontSize: 12,
                   ),
                 ),

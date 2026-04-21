@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme_utils.dart';
 
 class ConclusaoTreinoScreen extends StatefulWidget {
   final String titulo;
@@ -70,7 +71,7 @@ class _ConclusaoTreinoScreenState extends State<ConclusaoTreinoScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -147,10 +148,10 @@ class _ConclusaoTreinoScreenState extends State<ConclusaoTreinoScreen>
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        Text(
+                        const Text(
                           '8 dias seguidos!',
                           style: TextStyle(
-                            color: AppTheme.primaryLight,
+                            color: Colors.white,
                             fontSize: 14,
                           ),
                         ),
@@ -206,7 +207,7 @@ class _ConclusaoTreinoScreenState extends State<ConclusaoTreinoScreen>
                             : Icons.star_outline_rounded,
                         color: i < _estrelas
                             ? Colors.amber
-                            : AppTheme.grey,
+                            : context.subtitleColor,
                         size: 44,
                       ),
                     ),
@@ -231,7 +232,7 @@ class _ConclusaoTreinoScreenState extends State<ConclusaoTreinoScreen>
                     borderRadius: BorderRadius.circular(16),
                   ),
                   disabledBackgroundColor:
-                      AppTheme.surface,
+                      context.cardColor,
                 ),
                 child: Text(
                   _estrelas == 0
@@ -269,7 +270,7 @@ class _CardResultado extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -278,8 +279,8 @@ class _CardResultado extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             valor,
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: context.textColor,
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
@@ -287,8 +288,8 @@ class _CardResultado extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
-              color: AppTheme.grey,
+            style: TextStyle(
+              color: context.subtitleColor,
               fontSize: 12,
             ),
           ),

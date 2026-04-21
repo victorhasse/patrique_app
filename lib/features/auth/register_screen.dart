@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_transitions.dart';
 import '../../../main.dart';
+import '../../core/theme_utils.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -62,11 +63,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.white),
+          icon: Icon(Icons.arrow_back_ios_rounded,
+              color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -93,10 +94,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextField(
                 controller: _nomeController,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Seu nome',
                   prefixIcon: Icon(Icons.person_outline_rounded,
-                      color: AppTheme.grey),
+                      color: context.subtitleColor),
                 ),
               ),
 
@@ -109,10 +110,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'seu@email.com',
                   prefixIcon:
-                      Icon(Icons.email_outlined, color: AppTheme.grey),
+                      Icon(Icons.email_outlined, color: context.subtitleColor),
                 ),
               ),
 
@@ -127,14 +128,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: !_senhaVisivel,
                 decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon: const Icon(Icons.lock_outlined,
-                      color: AppTheme.grey),
+                  prefixIcon: Icon(Icons.lock_outlined,
+                      color: context.subtitleColor),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _senhaVisivel
                           ? Icons.visibility_off
                           : Icons.visibility,
-                      color: AppTheme.grey,
+                      color: context.subtitleColor,
                     ),
                     onPressed: () =>
                         setState(() => _senhaVisivel = !_senhaVisivel),
@@ -150,11 +151,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: _confirmarSenhaController,
-                obscureText: true,
-                decoration: const InputDecoration(
+                obscureText: !_senhaVisivel,
+                decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon:
-                      Icon(Icons.lock_outlined, color: AppTheme.grey),
+                  prefixIcon: Icon(Icons.lock_outlined,
+                      color: context.subtitleColor),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _senhaVisivel
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: context.subtitleColor,
+                    ),
+                    onPressed: () =>
+                        setState(() => _senhaVisivel = !_senhaVisivel),
+                  ),
                 ),
               ),
 
@@ -172,10 +183,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text.rich(
+                  child: Text.rich(
                     TextSpan(
                       text: 'Já tem conta? ',
-                      style: TextStyle(color: AppTheme.grey),
+                      style: TextStyle(color: context.subtitleColor),
                       children: [
                         TextSpan(
                           text: 'Entrar',

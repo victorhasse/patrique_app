@@ -5,6 +5,8 @@ import '../../core/theme/app_transitions.dart';
 import '../auth/login_screen.dart';
 import 'notificacoes_screen.dart';
 import 'editar_perfil_screen.dart';
+import '../../core/theme_controller.dart';
+import '../../core/theme_utils.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -89,7 +91,7 @@ class PerfilScreen extends StatelessWidget {
                         border: Border.all(color: AppTheme.primary),
                       ),
                       child: const Text(
-                        '⭐ Plano Anual',
+                        'Plano Anual',
                         style: TextStyle(
                           color: AppTheme.primary,
                           fontWeight: FontWeight.w600,
@@ -116,7 +118,7 @@ class PerfilScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _CardEstat(
-                      valor: '5🔥',
+                      valor: '5',
                       label: 'Streak\natual',
                       icone: Icons.local_fire_department_rounded,
                     ),
@@ -211,6 +213,47 @@ class PerfilScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
+              _SecaoMenu(
+                titulo: 'Aparência',
+                itens: [
+                Padding(
+                  padding:(const EdgeInsets.symmetric(horizontal: 16, vertical: 4)),
+                  child: Row(
+                    children: [
+                      Icon(
+                        ThemeController().isDark
+                            ? Icons.dark_mode_rounded
+                            : Icons.light_mode_rounded,
+                        color: AppTheme.primary,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          ThemeController().isDark ? 'Modo escuro' : 'Modo claro',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ),
+                      StatefulBuilder(
+                        builder: (context, setState) {
+                          return Switch(
+                            value: ThemeController().isDark,
+                            activeThumbColor: AppTheme.primary,
+                            onChanged: (_) async {
+                              await ThemeController().toggleTheme();
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
               // Botão sair
               OutlinedButton(
                 onPressed: () {
@@ -262,7 +305,7 @@ class _CardEstat extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -271,8 +314,8 @@ class _CardEstat extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             valor,
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: context.textColor,
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
@@ -281,8 +324,8 @@ class _CardEstat extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.grey,
+            style: TextStyle(
+              color: context.subtitleColor,
               fontSize: 11,
             ),
           ),
@@ -306,14 +349,14 @@ class _SecaoMenu extends StatelessWidget {
         Text(
           titulo,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppTheme.grey,
+                color: context.subtitleColor,
                 fontSize: 13,
               ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.surface,
+            color: context.cardColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(children: itens),
@@ -351,9 +394,9 @@ class _ItemMenu extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios_rounded,
-              color: AppTheme.grey,
+              color: context.subtitleColor,
               size: 14,
             ),
           ],

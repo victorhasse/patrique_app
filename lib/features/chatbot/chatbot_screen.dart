@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme_utils.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -154,7 +155,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.surface,
+        backgroundColor: context.bgColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
@@ -209,7 +210,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         maxWidth: MediaQuery.of(context).size.width * 0.75,
                       ),
                       decoration: BoxDecoration(
-                        color: isBot ? AppTheme.surface : AppTheme.primary,
+                        color: isBot ? context.cardColor : AppTheme.primary,
                         borderRadius: BorderRadius.only(
                           topLeft: const Radius.circular(16),
                           topRight: const Radius.circular(16),
@@ -219,8 +220,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       ),
                       child: Text(
                         msg['texto'],
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 15, height: 1.4),
+                        style: TextStyle(
+                            color: context.textColor, fontSize: 15, height: 1.4),
                       ),
                     ),
 

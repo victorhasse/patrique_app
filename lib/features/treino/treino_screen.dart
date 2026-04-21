@@ -4,6 +4,7 @@ import 'detalhe_treino_screen.dart';
 import '../../core/theme/app_transitions.dart';
 import '../../shared/widgets/animated_button.dart';
 import 'criar_treino_screen.dart';
+import '../../core/theme_utils.dart';
 
 class TreinoScreen extends StatelessWidget {
   const TreinoScreen({super.key});
@@ -218,7 +219,7 @@ class _CardGrupoMuscular extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: context.cardColor,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(

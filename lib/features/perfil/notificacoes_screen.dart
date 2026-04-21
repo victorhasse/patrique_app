@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/notification_service.dart';
+import '../../core/theme_utils.dart';
 
 class NotificacoesScreen extends StatefulWidget {
   const NotificacoesScreen({super.key});
@@ -23,9 +24,9 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: AppTheme.primary,
-              surface: AppTheme.surface,
+              surface: context.cardColor,
             ),
           ),
           child: child!,
@@ -89,11 +90,11 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.white),
+          icon: Icon(Icons.arrow_back_ios_rounded,
+              color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Notificações',
@@ -116,7 +117,7 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
 
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -148,8 +149,8 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
 
                   // Horário
                   if (_lembreteAtivo) ...[
-                    const Divider(
-                        color: AppTheme.background, height: 1),
+                    Divider(
+                        color: context.subtitleColor, height: 1),
                     InkWell(
                       onTap: _selecionarHorario,
                       borderRadius: BorderRadius.circular(16),
@@ -177,9 +178,9 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Icon(
+                            Icon(
                                 Icons.arrow_forward_ios_rounded,
-                                color: AppTheme.grey,
+                                color: context.subtitleColor,
                                 size: 14),
                           ],
                         ),
@@ -199,7 +200,7 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
 
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -242,7 +243,7 @@ class _NotificacoesScreenState extends State<NotificacoesScreen> {
                     ),
                   ),
 
-                  const Divider(color: AppTheme.background, height: 1),
+                  Divider(color: context.subtitleColor, height: 10),
 
                   // Treino concluído
                   Padding(

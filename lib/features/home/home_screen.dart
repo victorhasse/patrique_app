@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_transitions.dart';
+import '../../core/theme_utils.dart';
+import '../../shared/widgets/animated_button.dart';
 import 'calendario_screen.dart';
 import 'home_shimmer.dart';
-import '../../shared/widgets/animated_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Simula carregamento de dados
     Future.delayed(const Duration(milliseconds: 1800), () {
       if (mounted) setState(() => _carregando = false);
     });
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _carregando ? const HomeShimmer() : _HomeConteudo(),
+        child: _carregando ? const HomeShimmer() : const _HomeConteudo(),
       ),
     );
   }
@@ -39,6 +39,8 @@ class _HomeConteudo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -76,8 +78,10 @@ class _HomeConteudo extends StatelessWidget {
                   color: AppTheme.primary,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.person_rounded,
-                    color: Colors.white),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
@@ -104,18 +108,22 @@ class _HomeConteudo extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         '5 dias seguidos!',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Continue assim, não perca seu streak!',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: AppTheme.primaryLight),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          fontSize: 13,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -128,10 +136,12 @@ class _HomeConteudo extends StatelessWidget {
           const SizedBox(height: 28),
 
           // Dias da semana
-          Text('Sua semana',
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Sua semana',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 12),
-          _SemanaWidget(),
+          _SemanaWidget(isDark: isDark),
 
           const SizedBox(height: 12),
 
@@ -144,10 +154,13 @@ class _HomeConteudo extends StatelessWidget {
               );
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.primary.withValues(alpha: 0.3),
+                ),
               ),
               child: const Center(
                 child: Text(
@@ -165,26 +178,30 @@ class _HomeConteudo extends StatelessWidget {
           const SizedBox(height: 28),
 
           // Próximo treino
-          Text('Próximo treino',
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Próximo treino',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 12),
           AnimatedButton(
             onTap: () {},
-            child: const _CardTreino(
+            child: _CardTreino(
               titulo: 'Peito e Tríceps',
               exercicios: '6 exercícios',
               duracao: '45 min',
               icone: Icons.fitness_center_rounded,
+              isDark: isDark,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           AnimatedButton(
             onTap: () {},
-            child: const _CardTreino(
+            child: _CardTreino(
               titulo: 'Costas e Bíceps',
               exercicios: '5 exercícios',
               duracao: '40 min',
               icone: Icons.sports_gymnastics_rounded,
+              isDark: isDark,
             ),
           ),
 
@@ -196,6 +213,10 @@ class _HomeConteudo extends StatelessWidget {
 }
 
 class _SemanaWidget extends StatelessWidget {
+  final bool isDark;
+
+  const _SemanaWidget({required this.isDark});
+
   final List<Map<String, dynamic>> dias = const [
     {'dia': 'S', 'feito': true},
     {'dia': 'T', 'feito': true},
@@ -218,7 +239,11 @@ class _SemanaWidget extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: feito ? AppTheme.primary : AppTheme.surface,
+                color: feito
+                    ? AppTheme.primary
+                    : isDark
+                        ? AppTheme.surface
+                        : const Color(0xFFEEEEEE),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -227,8 +252,10 @@ class _SemanaWidget extends StatelessWidget {
                         color: Colors.white, size: 18)
                     : Text(
                         d['dia'],
-                        style: const TextStyle(
-                          color: AppTheme.grey,
+                        style: TextStyle(
+                          color: isDark
+                              ? AppTheme.grey
+                              : const Color(0xFF888888),
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -238,8 +265,10 @@ class _SemanaWidget extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               d['dia'],
-              style:
-                  const TextStyle(color: AppTheme.grey, fontSize: 11),
+              style: TextStyle(
+                color: isDark ? AppTheme.grey : const Color(0xFF888888),
+                fontSize: 11,
+              ),
             ),
           ],
         );
@@ -253,12 +282,14 @@ class _CardTreino extends StatelessWidget {
   final String exercicios;
   final String duracao;
   final IconData icone;
+  final bool isDark;
 
   const _CardTreino({
     required this.titulo,
     required this.exercicios,
     required this.duracao,
     required this.icone,
+    required this.isDark,
   });
 
   @override
@@ -266,8 +297,11 @@ class _CardTreino extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
+        border: isDark
+            ? null
+            : Border.all(color: const Color(0xFFFFD6E5)),
       ),
       child: Row(
         children: [
@@ -285,8 +319,11 @@ class _CardTreino extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(titulo,
-                    style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  titulo,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 4),
                 Text(
                   '$exercicios · $duracao',
@@ -296,8 +333,11 @@ class _CardTreino extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_ios_rounded,
-              color: AppTheme.grey, size: 16),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: isDark ? AppTheme.grey : const Color(0xFFBBBBBB),
+            size: 16,
+          ),
         ],
       ),
     );

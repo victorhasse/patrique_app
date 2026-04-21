@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import 'executar_treino_screen.dart';
 import '../../core/theme/app_transitions.dart';
+import '../../core/theme_utils.dart';
 
 class DetalheTreinoScreen extends StatelessWidget {
   final String titulo;
@@ -24,11 +25,11 @@ class DetalheTreinoScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.white),
+              color: AppTheme.primary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(titulo,
@@ -92,7 +93,7 @@ class DetalheTreinoScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.surface,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(

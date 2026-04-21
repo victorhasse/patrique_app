@@ -57,23 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: Column(
                   children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.fitness_center_rounded,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Patrique Fitness',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                    Image.asset(
+                      'assets/images/marca_fundo_transparente.png',
+                      height: 200,
+                      fit: BoxFit.contain,
                     ),
                     const SizedBox(height: 8),
                     Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_transitions.dart';
+import 'login_screen.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  bool _isDark = true;
 
   @override
   void initState() {
@@ -22,29 +24,41 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
     );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
-    _controller.forward();
-
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      _verificarOnboarding();
-    });
+    _carregarTemaENavegar();
   }
 
-  Future<void> _verificarOnboarding() async {
+  Future<void> _carregarTemaENavegar() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('tema_escuro') ?? true;
+
+    if (mounted) {
+      setState(() => _isDark = isDark);
+    }
+
+    _controller.forward();
+
+    await Future.delayed(const Duration(milliseconds: 2800));
+
     if (!mounted) return;
+
+    final jaViuOnboarding = prefs.getBool('onboarding_concluido') ?? false;
+
     Navigator.pushReplacement(
       context,
-      AppTransitions.fadeScale(const OnboardingScreen()),
+      AppTransitions.fadeScale(
+        jaViuOnboarding ? const LoginScreen() : const OnboardingScreen(),
+      ),
     );
   }
 
@@ -57,44 +71,20 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: _isDark ? const Color(0xFF111217) : Colors.white,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: ScaleTransition(
             scale: _scaleAnimation,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary,
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                  child: const Icon(
-                    Icons.fitness_center_rounded,
-                    color: Colors.white,
-                    size: 54,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Patrique Fitness',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Seu treino, sua evolução.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 48),
-                const CircularProgressIndicator(
-                  color: AppTheme.primary,
-                  strokeWidth: 2,
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Image.asset(
+                _isDark
+                    ? 'assets/images/marca_fundo_transparente.png'
+                    : 'assets/images/marca_fundo_branco.png',
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme_utils.dart';
 
 class EditarPerfilScreen extends StatefulWidget {
   const EditarPerfilScreen({super.key});
@@ -53,11 +54,11 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.white),
+          icon: Icon(Icons.arrow_back_ios_rounded,
+              color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Editar perfil',
@@ -190,7 +191,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                     decoration: BoxDecoration(
                       color: selecionado
                           ? AppTheme.primary.withValues(alpha: 0.15)
-                          : AppTheme.surface,
+                          : context.cardColor,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: selecionado
@@ -203,7 +204,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                       style: TextStyle(
                         color: selecionado
                             ? AppTheme.primary
-                            : AppTheme.white,
+                            : context.textColor,
                         fontWeight: selecionado
                             ? FontWeight.w600
                             : FontWeight.w400,
@@ -223,7 +224,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
 
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -298,7 +299,7 @@ class _Campo extends StatelessWidget {
           controller: controller,
           keyboardType: tipo,
           decoration: InputDecoration(
-            prefixIcon: Icon(icone, color: AppTheme.grey),
+            prefixIcon: Icon(icone, color: context.subtitleColor),
           ),
         ),
       ],

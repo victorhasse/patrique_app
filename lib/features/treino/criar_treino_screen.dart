@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme_utils.dart';
 
 class CriarTreinoScreen extends StatefulWidget {
   const CriarTreinoScreen({super.key});
@@ -31,7 +32,7 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
   void _adicionarExercicio() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: context.bgColor,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -82,11 +83,11 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.white),
+              color: AppTheme.primary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Novo treino',
@@ -183,7 +184,7 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: AppTheme.surface,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: AppTheme.primary.withValues(alpha: 0.2),
@@ -227,7 +228,7 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppTheme.surface,
+                      color: context.cardColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -493,7 +494,7 @@ class _Contador extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

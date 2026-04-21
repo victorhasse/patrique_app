@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme_utils.dart';
 
 class CalendarioScreen extends StatefulWidget {
   const CalendarioScreen({super.key});
@@ -12,7 +13,6 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
   final DateTime _hoje = DateTime.now();
   late DateTime _mesSelecionado;
 
-  // Simula dias que o usuário treinou
   final Set<DateTime> _diasTreinados = {
     DateTime(2026, 4, 1),
     DateTime(2026, 4, 2),
@@ -83,11 +83,9 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
         DateTime(_mesSelecionado.year, _mesSelecionado.month, 1);
     final ultimoDia =
         DateTime(_mesSelecionado.year, _mesSelecionado.month + 1, 0);
-
-    // Ajuste para semana começar na segunda
     int diaSemanaInicio = primeiroDia.weekday - 1;
-
-    List<DateTime?> dias = List.filled(diaSemanaInicio, null, growable: true);
+    List<DateTime?> dias =
+        List.filled(diaSemanaInicio, null, growable: true);
     for (int i = 1; i <= ultimoDia.day; i++) {
       dias.add(DateTime(_mesSelecionado.year, _mesSelecionado.month, i));
     }
@@ -105,13 +103,15 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
   @override
   Widget build(BuildContext context) {
     final dias = _getDiasDoMes();
+    final textColor = context.textColor;
+    final subtitleColor = context.subtitleColor;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: AppTheme.white),
+          icon: Icon(Icons.arrow_back_ios_rounded, color: textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -123,6 +123,8 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
+            const SizedBox(height: 8),
+
             // Cards de estatísticas
             Row(
               children: [
@@ -161,7 +163,7 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -172,9 +174,9 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                     children: [
                       IconButton(
                         onPressed: _mesAnterior,
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.chevron_left_rounded,
-                          color: AppTheme.white,
+                          color: textColor,
                         ),
                       ),
                       Text(
@@ -183,9 +185,9 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                       ),
                       IconButton(
                         onPressed: _proximoMes,
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.chevron_right_rounded,
-                          color: AppTheme.white,
+                          color: textColor,
                         ),
                       ),
                     ],
@@ -196,15 +198,21 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                   // Cabeçalho dias da semana
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
-                      _DiaSemanaLabel('S'),
-                      _DiaSemanaLabel('T'),
-                      _DiaSemanaLabel('Q'),
-                      _DiaSemanaLabel('Q'),
-                      _DiaSemanaLabel('S'),
-                      _DiaSemanaLabel('S'),
-                      _DiaSemanaLabel('D'),
-                    ],
+                    children: ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']
+                        .map((l) => SizedBox(
+                              width: 32,
+                              child: Center(
+                                child: Text(
+                                  l,
+                                  style: TextStyle(
+                                    color: subtitleColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
 
                   const SizedBox(height: 12),
@@ -223,7 +231,6 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                     itemBuilder: (context, index) {
                       final dia = dias[index];
                       if (dia == null) return const SizedBox();
-
                       final treinado = _foiTreinado(dia);
                       final hoje = _isHoje(dia);
 
@@ -249,7 +256,7 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                                   style: TextStyle(
                                     color: hoje
                                         ? AppTheme.primary
-                                        : AppTheme.grey,
+                                        : subtitleColor,
                                     fontSize: 12,
                                     fontWeight: hoje
                                         ? FontWeight.w700
@@ -273,17 +280,20 @@ class _CalendarioScreenState extends State<CalendarioScreen> {
                 _LegendaItem(
                   cor: AppTheme.primary,
                   label: 'Treinou',
+                  labelColor: subtitleColor,
                 ),
                 const SizedBox(width: 24),
                 _LegendaItem(
                   cor: AppTheme.primary.withValues(alpha: 0.2),
                   label: 'Hoje',
                   borda: true,
+                  labelColor: subtitleColor,
                 ),
                 const SizedBox(width: 24),
                 _LegendaItem(
-                  cor: AppTheme.surface,
+                  cor: context.cardColor,
                   label: 'Sem treino',
+                  labelColor: subtitleColor,
                 ),
               ],
             ),
@@ -316,7 +326,7 @@ class _CardStat extends StatelessWidget {
       decoration: BoxDecoration(
         color: destaque
             ? AppTheme.primary.withValues(alpha: 0.15)
-            : AppTheme.surface,
+            : context.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: destaque
             ? Border.all(color: AppTheme.primary, width: 1)
@@ -328,8 +338,8 @@ class _CardStat extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             valor,
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: context.textColor,
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
@@ -338,8 +348,8 @@ class _CardStat extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.grey,
+            style: TextStyle(
+              color: context.subtitleColor,
               fontSize: 10,
             ),
           ),
@@ -349,36 +359,16 @@ class _CardStat extends StatelessWidget {
   }
 }
 
-class _DiaSemanaLabel extends StatelessWidget {
-  final String letra;
-  const _DiaSemanaLabel(this.letra);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 32,
-      child: Center(
-        child: Text(
-          letra,
-          style: const TextStyle(
-            color: AppTheme.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _LegendaItem extends StatelessWidget {
   final Color cor;
   final String label;
   final bool borda;
+  final Color labelColor;
 
   const _LegendaItem({
     required this.cor,
     required this.label,
+    required this.labelColor,
     this.borda = false,
   });
 
@@ -400,7 +390,7 @@ class _LegendaItem extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(color: AppTheme.grey, fontSize: 12),
+          style: TextStyle(color: labelColor, fontSize: 12),
         ),
       ],
     );

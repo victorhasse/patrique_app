@@ -98,7 +98,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-
+            Center(
+              child: Image.asset(
+                'assets/images/marca_fundo_transparente.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ),
             // Pages
             Expanded(
               child: PageView.builder(

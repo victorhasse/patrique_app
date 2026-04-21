@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../core/theme/app_theme.dart';
 import 'conclusao_treino_screen.dart';
+import '../../core/theme_utils.dart';
 
 class ExecutarTreinoScreen extends StatefulWidget {
   final String titulo;
@@ -26,26 +27,18 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
   int _segundosIntervalo = 0;
   bool _emIntervalo = false;
   late Timer _timerTotal;
-  late Timer _timerIntervalo;
-  YoutubePlayerController? _youtubeController;
+  Timer? _timerIntervalo;
+  late YoutubePlayerController _youtubeController;
 
   @override
   void initState() {
     super.initState();
     _iniciarTimerTotal();
-    _carregarVideo();
+    _criarController();
   }
 
-  void _iniciarTimerTotal() {
-    _timerTotal = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() => _segundosTotais++);
-    });
-  }
-
-  void _carregarVideo() {
-    _youtubeController?.dispose();
-    final videoId =
-        widget.exercicios[_exercicioAtual]['videoId'] as String;
+  void _criarController() {
+    final videoId = widget.exercicios[_exercicioAtual]['videoId'] as String;
     _youtubeController = YoutubePlayerController(
       initialVideoId: videoId,
       flags: const YoutubePlayerFlags(
@@ -58,9 +51,14 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
     );
   }
 
+  void _iniciarTimerTotal() {
+    _timerTotal = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() => _segundosTotais++);
+    });
+  }
+
   void _iniciarIntervalo() {
-    final minutos =
-        widget.exercicios[_exercicioAtual]['intervalo'] as int;
+    final minutos = widget.exercicios[_exercicioAtual]['intervalo'] as int;
     setState(() {
       _emIntervalo = true;
       _segundosIntervalo = minutos * 60;
@@ -68,6 +66,10 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
 
     _timerIntervalo =
         Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
       setState(() {
         if (_segundosIntervalo > 0) {
           _segundosIntervalo--;
@@ -81,16 +83,29 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
 
   void _proximoExercicio() {
     if (_exercicioAtual < widget.exercicios.length - 1) {
+      _timerIntervalo?.cancel();
+
+      // Dispose do controller antigo
+      final oldController = _youtubeController;
+
       setState(() {
         _exercicioAtual++;
         _emIntervalo = false;
       });
-      _carregarVideo();
+
+      // Cria novo controller após setState
+      _criarController();
+
+      // Dispose do antigo com delay para evitar o erro
+      Future.delayed(const Duration(milliseconds: 300), () {
+        oldController.dispose();
+      });
     }
   }
 
   void _finalizarTreino() {
     _timerTotal.cancel();
+    _timerIntervalo?.cancel();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -113,8 +128,8 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
   @override
   void dispose() {
     _timerTotal.cancel();
-    if (_emIntervalo) _timerIntervalo.cancel();
-    _youtubeController?.dispose();
+    _timerIntervalo?.cancel();
+    _youtubeController.dispose();
     super.dispose();
   }
 
@@ -124,35 +139,36 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
     final isUltimo = _exercicioAtual == widget.exercicios.length - 1;
 
     return YoutubePlayerBuilder(
+      // Key força recriação completa do player ao trocar exercício
+      key: ValueKey(_exercicioAtual),
       player: YoutubePlayer(
-        controller: _youtubeController!,
+        controller: _youtubeController,
         showVideoProgressIndicator: true,
         progressIndicatorColor: widget.cor,
       ),
       builder: (context, player) {
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: context.bgColor,
           appBar: AppBar(
-            backgroundColor: AppTheme.background,
+            backgroundColor: context.bgColor,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.close_rounded, color: AppTheme.white),
+              icon: Icon(Icons.close_rounded, color: context.textColor),
               onPressed: () {
                 showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
-                    backgroundColor: AppTheme.surface,
-                    title: const Text('Sair do treino?',
-                        style: TextStyle(color: AppTheme.white)),
-                    content: const Text(
+                    backgroundColor: context.bgColor,
+                    title: Text('Sair do treino?',
+                        style: TextStyle(color: context.textColor)),
+                    content: Text(
                         'Seu progresso não será salvo.',
-                        style: TextStyle(color: AppTheme.grey)),
+                        style: TextStyle(color: context.textColor)),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Continuar treino',
-                            style:
-                                TextStyle(color: AppTheme.primary)),
+                            style: TextStyle(color: AppTheme.primary)),
                       ),
                       TextButton(
                         onPressed: () {
@@ -160,31 +176,28 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                           Navigator.pop(context);
                         },
                         child: const Text('Sair',
-                            style:
-                                TextStyle(color: Colors.redAccent)),
+                            style: TextStyle(color: Colors.redAccent)),
                       ),
                     ],
                   ),
                 );
               },
             ),
-            // Cronômetro total
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.timer_outlined,
-                    color: AppTheme.grey, size: 16),
+                Icon(Icons.timer_outlined,
+                    color: context.textColor, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   _formatarTempo(_segundosTotais),
-                  style: const TextStyle(
-                      color: AppTheme.white,
+                  style: TextStyle(
+                      color: context.textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w600),
                 ),
               ],
             ),
-            // Progresso
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 16),
@@ -205,11 +218,9 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
               children: [
                 // Barra de progresso
                 LinearProgressIndicator(
-                  value: (_exercicioAtual + 1) /
-                      widget.exercicios.length,
-                  backgroundColor: AppTheme.surface,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(widget.cor),
+                  value: (_exercicioAtual + 1) / widget.exercicios.length,
+                  backgroundColor: context.bgColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(widget.cor),
                   minHeight: 4,
                 ),
 
@@ -221,18 +232,14 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nome do exercício
                       Text(
                         ex['nome'],
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium,
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 6),
                       Text(
                         ex['descricao'],
-                        style:
-                            Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
 
                       const SizedBox(height: 20),
@@ -277,7 +284,7 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppTheme.surface,
+                            color: context.cardColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                                 color: widget.cor.withValues(alpha: 0.4)),
@@ -303,14 +310,12 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                               const SizedBox(height: 8),
                               TextButton(
                                 onPressed: () {
-                                  _timerIntervalo.cancel();
-                                  setState(
-                                      () => _emIntervalo = false);
+                                  _timerIntervalo?.cancel();
+                                  setState(() => _emIntervalo = false);
                                 },
-                                child: const Text(
+                                child: Text(
                                   'Pular intervalo',
-                                  style: TextStyle(
-                                      color: AppTheme.grey),
+                                  style: TextStyle(color: context.subtitleColor),
                                 ),
                               ),
                             ],
@@ -324,11 +329,11 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                         ElevatedButton.icon(
                           onPressed: _iniciarIntervalo,
                           icon: const Icon(Icons.timer_rounded),
-                          label: const Text('Série concluída — iniciar intervalo'),
+                          label: const Text(
+                              'Série concluída — iniciar intervalo'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: widget.cor,
-                            minimumSize:
-                                const Size(double.infinity, 52),
+                            minimumSize: const Size(double.infinity, 52),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -336,12 +341,12 @@ class _ExecutarTreinoScreenState extends State<ExecutarTreinoScreen> {
                         ),
                         const SizedBox(height: 12),
                         OutlinedButton(
-                          onPressed:
-                              isUltimo ? _finalizarTreino : _proximoExercicio,
+                          onPressed: isUltimo
+                              ? _finalizarTreino
+                              : _proximoExercicio,
                           style: OutlinedButton.styleFrom(
                             foregroundColor: widget.cor,
-                            minimumSize:
-                                const Size(double.infinity, 52),
+                            minimumSize: const Size(double.infinity, 52),
                             side: BorderSide(color: widget.cor),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -386,7 +391,7 @@ class _CardInfo extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -395,8 +400,8 @@ class _CardInfo extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             valor,
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: context.textColor,
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -404,8 +409,8 @@ class _CardInfo extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
-              color: AppTheme.grey,
+            style: TextStyle(
+              color: context.subtitleColor,
               fontSize: 10,
             ),
           ),
