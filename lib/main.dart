@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme_controller.dart';
 import 'features/auth/splash_screen.dart';
-import 'features/auth/login_screen.dart';
-import 'features/auth/onboarding_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/treino/treino_screen.dart';
 import 'features/chatbot/chatbot_screen.dart';
 import 'features/perfil/perfil_screen.dart';
 import 'core/notification_service.dart';
+import 'features/amigos/amigos_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +59,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     TreinoScreen(),
     ChatbotScreen(),
+    AmigosScreen(),
     PerfilScreen(),
   ];
 
@@ -78,6 +77,8 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.fitness_center_rounded), label: 'Treino'),
           BottomNavigationBarItem(
               icon: Icon(Icons.chat_bubble_rounded), label: 'Chatbot'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.group_rounded), label: 'Amigos'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded), label: 'Perfil'),
         ],
