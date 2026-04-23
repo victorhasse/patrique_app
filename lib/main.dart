@@ -8,6 +8,7 @@ import 'features/chatbot/chatbot_screen.dart';
 import 'features/perfil/perfil_screen.dart';
 import 'core/notification_service.dart';
 import 'features/amigos/amigos_screen.dart';
+import 'features/nutricao/nutricao_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class _MainScreenState extends State<MainScreen> {
     TreinoScreen(),
     ChatbotScreen(),
     AmigosScreen(),
+    NutricaoScreen(),
     PerfilScreen(),
   ];
 
@@ -79,6 +81,8 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.chat_bubble_rounded), label: 'Chatbot'),
           BottomNavigationBarItem(
               icon: Icon(Icons.group_rounded), label: 'Amigos'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.local_fire_department_rounded), label: 'Nutrição'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded), label: 'Perfil'),
         ],
