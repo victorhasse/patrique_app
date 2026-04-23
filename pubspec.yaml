@@ -18,6 +18,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -30,4 +31,10 @@ flutter:
     - assets/images/marca_fundo_rosa.png
     - assets/images/marca_fundo_transparente.png
     - assets/images/icon_fundo_transparente.png
-    
+
+flutter_launcher_icons:
+  ios: true
+  android: false
+  image_path: "assets/images/icon_com_padding.png"
+  ios_content_mode: scaleAspectFit
+  background_color: "#FF3E7D"
