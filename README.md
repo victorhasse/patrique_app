@@ -132,7 +132,7 @@ We use a modern and energetic palette to reflect workout intensity:
 
 ## 👤 Credits
 
-Developed by **Victor Hasse** & **Bernardo Santos Vieira**
+Developed by **Victor Hasse**, **Bernardo Santos Vieira**, **Guilherme Mitsuo Honda**, **Igor Vinicius Sotili Mirandolli**
 
 [![GitHub](https://img.shields.io/badge/victorhasse-181717?style=flat&logo=github)](https://github.com/victorhasse)
 [![GitHub](https://img.shields.io/badge/BernardoSVieira-181717?style=flat&logo=github)](https://github.com/BernardoSVieira)
