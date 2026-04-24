@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme_controller.dart';
+import 'core/notification_service.dart';
 import 'features/auth/splash_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/treino/treino_screen.dart';
+import 'features/treino/detalhe_treino_screen.dart';
 import 'features/chatbot/chatbot_screen.dart';
-import 'features/perfil/perfil_screen.dart';
-import 'core/notification_service.dart';
 import 'features/amigos/amigos_screen.dart';
 import 'features/nutricao/nutricao_screen.dart';
+import 'features/perfil/perfil_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,15 +47,43 @@ class _PatriqueAppState extends State<PatriqueApp> {
   }
 }
 
+final mainScreenKey = GlobalKey<MainScreenState>();
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainScreen> createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
+  void trocarAba(int index) {
+    setState(() => _currentIndex = index);
+  }
+
+  void irParaTreino({
+    required String titulo,
+    required Color cor,
+    required List<Map<String, dynamic>> exercicios,
+  }) {
+    setState(() => _currentIndex = 1);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetalheTreinoScreen(
+              titulo: titulo,
+              cor: cor,
+              exercicios: exercicios,
+            ),
+          ),
+        );
+      }
+    });
+  }
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -80,9 +109,9 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
               icon: Icon(Icons.chat_bubble_rounded), label: 'Chatbot'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.group_rounded), label: 'Amigos'),
+              icon: Icon(Icons.people_rounded), label: 'Amigos'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.local_fire_department_rounded), label: 'Nutrição'),
+              icon: Icon(Icons.restaurant_rounded), label: 'Nutrição'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded), label: 'Perfil'),
         ],

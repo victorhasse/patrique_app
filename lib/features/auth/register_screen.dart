@@ -54,7 +54,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Cadastro bem sucedido — vai para o app
     Navigator.pushAndRemoveUntil(
       context,
-      AppTransitions.fadeScale(const MainScreen()),
+      AppTransitions.fadeScale(
+        MainScreen(key: mainScreenKey),
+        ),
       (route) => false,
     );
   }

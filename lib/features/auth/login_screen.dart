@@ -37,7 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      AppTransitions.fadeScale(const MainScreen()),
+      AppTransitions.fadeScale(
+        MainScreen(key: mainScreenKey),
+        ),
       (route) => false,
     );
   }

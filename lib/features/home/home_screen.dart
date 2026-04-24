@@ -5,6 +5,9 @@ import '../../core/theme_utils.dart';
 import '../../shared/widgets/animated_button.dart';
 import 'calendario_screen.dart';
 import 'home_shimmer.dart';
+// ignore: unused_import
+import '../../../main.dart';
+import '../treino/detalhe_treino_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -184,10 +187,58 @@ class _HomeConteudo extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           AnimatedButton(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                AppTransitions.slideFromRight(
+                  DetalheTreinoScreen(
+                    titulo: 'Peito e Tríceps',
+                    cor: AppTheme.primary,
+                    exercicios: const [
+                      {
+                        'nome': 'Supino Reto',
+                        'descricao': 'Exercício composto para peitoral maior, deltóide anterior e tríceps.',
+                        'series': 4,
+                        'repeticoes': '10-12',
+                        'carga': '60kg',
+                        'intervalo': 2,
+                        'videoId': 'rT7DgCr-3pg',
+                      },
+                      {
+                        'nome': 'Supino Inclinado',
+                        'descricao': 'Foca na porção superior do peitoral com maior amplitude.',
+                        'series': 3,
+                        'repeticoes': '10-12',
+                        'carga': '50kg',
+                        'intervalo': 2,
+                        'videoId': 'DbFgADa2PL8',
+                      },
+                      {
+                        'nome': 'Crucifixo',
+                        'descricao': 'Isolamento do peitoral com movimento de abertura dos braços.',
+                        'series': 3,
+                        'repeticoes': '12-15',
+                        'carga': '14kg',
+                        'intervalo': 1,
+                        'videoId': 'eozdVDA78K0',
+                      },
+                      {
+                        'nome': 'Tríceps Pulley',
+                        'descricao': 'Isolamento do tríceps com cabo, excelente para definição.',
+                        'series': 4,
+                        'repeticoes': '12-15',
+                        'carga': '30kg',
+                        'intervalo': 1,
+                        'videoId': '2-LAMcpzODU',
+                      },
+                    ],
+                  ),
+                ),
+              );
+            },
             child: _CardTreino(
               titulo: 'Peito e Tríceps',
-              exercicios: '6 exercícios',
+              exercicios: '4 exercícios',
               duracao: '45 min',
               icone: Icons.fitness_center_rounded,
               isDark: isDark,
@@ -195,10 +246,58 @@ class _HomeConteudo extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           AnimatedButton(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                AppTransitions.slideFromRight(
+                  DetalheTreinoScreen(
+                    titulo: 'Costas e Bíceps',
+                    cor: const Color(0xFF7C3AED),
+                    exercicios: const [
+                      {
+                        'nome': 'Puxada Frontal',
+                        'descricao': 'Exercício composto para grande dorsal e bíceps.',
+                        'series': 4,
+                        'repeticoes': '10-12',
+                        'carga': '70kg',
+                        'intervalo': 2,
+                        'videoId': 'CAwf7n6Luuc',
+                      },
+                      {
+                        'nome': 'Remada Curvada',
+                        'descricao': 'Fortalece o dorsal, romboides e trapézio médio.',
+                        'series': 4,
+                        'repeticoes': '10-12',
+                        'carga': '60kg',
+                        'intervalo': 2,
+                        'videoId': 'kBWAon7ItDw',
+                      },
+                      {
+                        'nome': 'Rosca Direta',
+                        'descricao': 'Isolamento clássico do bíceps braquial.',
+                        'series': 3,
+                        'repeticoes': '12-15',
+                        'carga': '20kg',
+                        'intervalo': 1,
+                        'videoId': 'ykJmrZ5v0Oo',
+                      },
+                      {
+                        'nome': 'Rosca Martelo',
+                        'descricao': 'Trabalha bíceps e braquiorradial com pegada neutra.',
+                        'series': 3,
+                        'repeticoes': '12-15',
+                        'carga': '16kg',
+                        'intervalo': 1,
+                        'videoId': 'zC3nLlEvin4',
+                      },
+                    ],
+                  ),
+                ),
+              );
+            },
             child: _CardTreino(
               titulo: 'Costas e Bíceps',
-              exercicios: '5 exercícios',
+              exercicios: '4 exercícios',
               duracao: '40 min',
               icone: Icons.sports_gymnastics_rounded,
               isDark: isDark,
