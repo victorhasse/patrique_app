@@ -14,6 +14,28 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool _emailValido(String email) {
+    if (email.contains(RegExp(r"\s"))) return false;
+
+    final match = RegExp(r'^[^\s@]+@([^\s@]+\.[^\s@]+)$').firstMatch(email);
+    if (match == null) return false;
+
+    final allowedDomains = <String>{
+      'gmail.com',
+      'outlook.com',
+      'hotmail.com',
+      'live.com',
+      'icloud.com',
+      'me.com',
+      'yahoo.com',
+      'proton.me',
+      'protonmail.com',
+    };
+
+    final domain = match.group(1)?.toLowerCase() ?? '';
+    return allowedDomains.contains(domain);
+  }
+
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
@@ -38,6 +60,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Preencha todos os campos'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (!_emailValido(_emailController.text.trim())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'E-mail inválido: use um provedor permitido (gmail, outlook, icloud, etc)',
+          ),
           backgroundColor: Colors.redAccent,
         ),
       );
