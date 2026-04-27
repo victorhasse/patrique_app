@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../../../main.dart';
+import '../../core/auth_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_transitions.dart';
 import 'register_screen.dart';
-import '../../../main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _senhaVisivel = false;
+  bool _carregando = false;
 
   @override
   void dispose() {
@@ -23,12 +26,31 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _entrar() {
-    // Por enquanto aceita qualquer email/senha preenchidos
+  Future<void> _entrar() async {
     if (_emailController.text.isEmpty || _senhaController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Preencha o e-mail e a senha'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _carregando = true);
+
+    final response = await AuthService.instance.login(
+      email: _emailController.text,
+      senha: _senhaController.text,
+    );
+
+    if (!mounted) return;
+    setState(() => _carregando = false);
+
+    if (!response.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -52,8 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-
-              // Logo / título
               Center(
                 child: Column(
                   children: [
@@ -70,41 +90,30 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 48),
-
-              // Campo email
-              Text('E-mail',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text('E-mail', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   hintText: 'seu@email.com',
-                  prefixIcon:
-                      Icon(Icons.email_outlined, color: AppTheme.grey),
+                  prefixIcon: Icon(Icons.email_outlined, color: AppTheme.grey),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Campo senha
-              Text('Senha',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text('Senha', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _senhaController,
                 obscureText: !_senhaVisivel,
                 decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon: const Icon(Icons.lock_outlined,
-                      color: AppTheme.grey),
+                  prefixIcon:
+                      const Icon(Icons.lock_outlined, color: AppTheme.grey),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _senhaVisivel
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                      _senhaVisivel ? Icons.visibility_off : Icons.visibility,
                       color: AppTheme.grey,
                     ),
                     onPressed: () =>
@@ -112,10 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 12),
-
-              // Esqueci a senha
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -126,18 +132,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 24),
-
-              // Botão entrar
               ElevatedButton(
-                onPressed: _entrar,
+                onPressed: _carregando ? null : _entrar,
                 child: const Text('Entrar'),
               ),
-
               const SizedBox(height: 16),
-
-              // Divisor
               Row(
                 children: [
                   const Expanded(child: Divider(color: AppTheme.surface)),
@@ -151,10 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Expanded(child: Divider(color: AppTheme.surface)),
                 ],
               ),
-
               const SizedBox(height: 16),
-
-              // Botão cadastro
               OutlinedButton(
                 onPressed: () {
                   Navigator.push(
@@ -172,11 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Text(
                   'Criar conta',
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
-
               const SizedBox(height: 32),
             ],
           ),
