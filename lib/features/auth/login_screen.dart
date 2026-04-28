@@ -107,6 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _senhaController,
                 obscureText: !_senhaVisivel,
+                onSubmitted: (_) {
+                  if (!_carregando) _entrar();
+                },
                 decoration: InputDecoration(
                   hintText: '••••••••',
                   prefixIcon:
@@ -180,3 +183,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
