@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 import '../../core/theme/app_theme.dart';
 import '../auth/planos_screen.dart';
 import '../../core/theme/app_transitions.dart';
@@ -17,8 +18,9 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  String _nome = 'Usuário';
+  String _nome = 'UsuÃ¡rio';
   String _email = 'Sem e-mail';
+  String? _fotoPerfilPath;
 
   @override
   void initState() {
@@ -33,9 +35,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
     if (!mounted) return;
     setState(() {
-      _nome = (nome != null && nome.trim().isNotEmpty) ? nome : 'Usuário';
-      _email =
-          (email != null && email.trim().isNotEmpty) ? email : 'Sem e-mail';
+      _nome = (nome != null && nome.trim().isNotEmpty) ? nome : 'UsuÃ¡rio';
+      _email = (email != null && email.trim().isNotEmpty) ? email : 'Sem e-mail';
+      final foto = prefs.getString('user_foto_perfil');
+      _fotoPerfilPath = (foto != null && foto.trim().isNotEmpty) ? foto : null;
     });
   }
 
@@ -61,7 +64,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           AppTransitions.slideFromRight(
                             const EditarPerfilScreen(),
                           ),
-                        );
+                        ).then((_) => _carregarDadosUsuario());
                       },
                       child: Stack(
                       children: [
@@ -72,11 +75,19 @@ class _PerfilScreenState extends State<PerfilScreen> {
                             color: AppTheme.primary,
                             borderRadius: BorderRadius.circular(24),
                           ),
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                            size: 50,
-                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: (_fotoPerfilPath != null &&
+                                  _fotoPerfilPath!.isNotEmpty &&
+                                  File(_fotoPerfilPath!).existsSync())
+                              ? Image.file(
+                                  File(_fotoPerfilPath!),
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(
+                                  Icons.person_rounded,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -133,13 +144,13 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
               const SizedBox(height: 32),
 
-              // Cards de estatísticas
+              // Cards de estatÃ­sticas
               Row(
                 children: [
                   Expanded(
                     child: _CardEstat(
                       valor: '13',
-                      label: 'Treinos\nno mês',
+                      label: 'Treinos\nno mÃªs',
                       icone: Icons.fitness_center_rounded,
                     ),
                   ),
@@ -164,7 +175,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
               const SizedBox(height: 32),
 
-              // Seção configurações
+              // SeÃ§Ã£o configuraÃ§Ãµes
               _SecaoMenu(
                 titulo: 'Conta',
                 itens: [
@@ -176,7 +187,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         context,
                         AppTransitions.slideFromRight(
                             const EditarPerfilScreen()),
-                      );
+                      ).then((_) => _carregarDadosUsuario());
                     },
                   ),
                   _ItemMenu(
@@ -200,11 +211,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
               const SizedBox(height: 16),
 
               _SecaoMenu(
-                titulo: 'Preferências',
+                titulo: 'PreferÃªncias',
                 itens: [
                   _ItemMenu(
                     icone: Icons.notifications_outlined,
-                    label: 'Notificações',
+                    label: 'NotificaÃ§Ãµes',
                     onTap: () {
                       Navigator.push(
                         context,
@@ -242,7 +253,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               const SizedBox(height: 16),
 
               _SecaoMenu(
-                titulo: 'Aparência',
+                titulo: 'AparÃªncia',
                 itens: [
                 Padding(
                   padding:(const EdgeInsets.symmetric(horizontal: 16, vertical: 4)),
@@ -282,7 +293,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
               const SizedBox(height: 16),
 
-              // Botão sair
+              // BotÃ£o sair
               OutlinedButton(
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
@@ -433,3 +444,4 @@ class _ItemMenu extends StatelessWidget {
     );
   }
 }
+

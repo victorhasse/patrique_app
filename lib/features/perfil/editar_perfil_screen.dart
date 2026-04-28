@@ -225,6 +225,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_nome', _nomeController.text.trim());
       await prefs.setString('user_email', _emailController.text.trim());
+      await prefs.setString('user_foto_perfil', _fotoPerfilPath ?? '');
 
       if (!mounted) return;
       setState(() => _carregando = false);
