@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   AuthService._();
@@ -57,11 +58,17 @@ class AuthService {
           ? decoded
           : <String, dynamic>{};
 
-      final message = (json['message'] is String && (json['message'] as String).trim().isNotEmpty)
+      final message = (json['message'] is String &&
+              (json['message'] as String).trim().isNotEmpty)
           ? json['message'] as String
           : _statusMessage(response.statusCode);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        await _persistSession(
+          token: json['token'] as String?,
+          user: json['user'],
+        );
+
         return AuthResponse.success(
           message: message,
           token: json['token'] as String?,
@@ -71,13 +78,13 @@ class AuthService {
 
       return AuthResponse.failure(message: message);
     } on TimeoutException {
-      return AuthResponse.failure(message: 'tempo de conexÃ£o esgotado');
+      return AuthResponse.failure(message: 'tempo de conexão esgotado');
     } on SocketException {
       return AuthResponse.failure(
-        message: 'nÃ£o foi possÃ­vel conectar ao servidor',
+        message: 'não foi possível conectar ao servidor',
       );
     } catch (_) {
-      return AuthResponse.failure(message: 'erro inesperado na autenticaÃ§Ã£o');
+      return AuthResponse.failure(message: 'erro inesperado na autenticação');
     } finally {
       client.close(force: true);
     }
@@ -106,9 +113,33 @@ class AuthService {
       return 'erro interno do servidor';
     }
     if (statusCode == 404) {
-      return 'rota nÃ£o encontrada';
+      return 'rota não encontrada';
     }
-    return 'nÃ£o foi possÃ­vel concluir a autenticaÃ§Ã£o';
+    return 'não foi possível concluir a autenticação';
+  }
+
+  Future<void> _persistSession({
+    required String? token,
+    required dynamic user,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (token != null && token.isNotEmpty) {
+      await prefs.setString('auth_token', token);
+    }
+
+    if (user is Map) {
+      final nome = user['nome'];
+      final email = user['email'];
+
+      if (nome is String && nome.trim().isNotEmpty) {
+        await prefs.setString('user_nome', nome.trim());
+      }
+
+      if (email is String && email.trim().isNotEmpty) {
+        await prefs.setString('user_email', email.trim());
+      }
+    }
   }
 }
 

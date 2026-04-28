@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_theme.dart';
 import '../auth/planos_screen.dart';
 import '../../core/theme/app_transitions.dart';
@@ -8,8 +9,35 @@ import 'editar_perfil_screen.dart';
 import '../../core/theme_controller.dart';
 import '../../core/theme_utils.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
+
+  @override
+  State<PerfilScreen> createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends State<PerfilScreen> {
+  String _nome = 'Usuário';
+  String _email = 'Sem e-mail';
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDadosUsuario();
+  }
+
+  Future<void> _carregarDadosUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    final nome = prefs.getString('user_nome');
+    final email = prefs.getString('user_email');
+
+    if (!mounted) return;
+    setState(() {
+      _nome = (nome != null && nome.trim().isNotEmpty) ? nome : 'Usuário';
+      _email =
+          (email != null && email.trim().isNotEmpty) ? email : 'Sem e-mail';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +100,12 @@ class PerfilScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Fulano da Silva',
+                      _nome,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'fulano@email.com',
+                      _email,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 12),
