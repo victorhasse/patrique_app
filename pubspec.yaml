@@ -31,6 +31,8 @@ flutter:
     - assets/images/marca_fundo_rosa.png
     - assets/images/marca_fundo_transparente.png
     - assets/images/icon_fundo_transparente.png
+    - assets/images/patrique_estrela.png
+    - assets/images/chad_esponja.png
 
 flutter_launcher_icons:
   ios: true

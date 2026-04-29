@@ -158,7 +158,59 @@ class TreinoScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text('Selecione um treino para começar',
                   style: Theme.of(context).textTheme.bodyMedium),
+
+              const SizedBox(height: 16),
+
+              // Card Patrique Estrela
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppTheme.primaryDark, AppTheme.primary],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'Bora treinar! 💪',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Escolha um treino abaixo e vamos nessa! Sem desculpas hoje!',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Image.asset(
+                      'assets/images/patrique_estrela.png',
+                      height: 110,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 24),
+
               _CardGrupoMuscular(
                 letra: 'A',
                 titulo: 'Peito e Tríceps',
@@ -257,8 +309,7 @@ class _CardGrupoMuscular extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded,
-                color: cor, size: 18),
+            Icon(Icons.arrow_forward_ios_rounded, color: cor, size: 18),
           ],
         ),
       ),

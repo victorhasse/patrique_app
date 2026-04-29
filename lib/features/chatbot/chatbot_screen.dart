@@ -98,7 +98,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   void _responderOpcao(String opcao) {
     setState(() {
-      // Mensagem do usuário
       _mensagens.add({'texto': opcao, 'isBot': false});
     });
 
@@ -132,7 +131,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   @override
   void initState() {
     super.initState();
-    // Adiciona opções iniciais
     Future.delayed(const Duration(milliseconds: 400), () {
       setState(() {
         _mensagens.add({
@@ -160,15 +158,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/images/patrique_estrela.png',
+                width: 36,
+                height: 36,
+                fit: BoxFit.contain,
               ),
-              child: const Icon(Icons.smart_toy_rounded,
-                  color: Colors.white, size: 20),
             ),
             const SizedBox(width: 12),
             Column(
@@ -185,7 +182,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
       body: Column(
         children: [
-          // Lista de mensagens
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -201,16 +197,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       ? CrossAxisAlignment.start
                       : CrossAxisAlignment.end,
                   children: [
-                    // Bolha de mensagem
                     Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.75,
+                        horizontal: 16,
+                        vertical: 12,
                       ),
+                      constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.75),
                       decoration: BoxDecoration(
-                        color: isBot ? context.cardColor : AppTheme.primary,
+                        color: isBot ? AppTheme.surface : AppTheme.primary,
                         borderRadius: BorderRadius.only(
                           topLeft: const Radius.circular(16),
                           topRight: const Radius.circular(16),
@@ -220,14 +216,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       ),
                       child: Text(
                         msg['texto'],
-                        style: TextStyle(
-                            color: context.textColor, fontSize: 15, height: 1.4),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
                       ),
                     ),
-
-                    // Opções de resposta rápida
-                    if (opcoes != null &&
-                        index == _mensagens.length - 1) ...[
+                    if (opcoes != null && index == _mensagens.length - 1) ...[
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,

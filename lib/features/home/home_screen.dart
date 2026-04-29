@@ -5,7 +5,6 @@ import '../../core/theme_utils.dart';
 import '../../shared/widgets/animated_button.dart';
 import 'calendario_screen.dart';
 import 'home_shimmer.dart';
-// ignore: unused_import
 import '../../../main.dart';
 import '../treino/detalhe_treino_screen.dart';
 
@@ -60,7 +59,7 @@ class _HomeConteudo extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Olá, Fulano! 👋',
+                      'Olá, Fulano!',
                       style: Theme.of(context).textTheme.headlineMedium,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -81,10 +80,7 @@ class _HomeConteudo extends StatelessWidget {
                   color: AppTheme.primary,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.person_rounded,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.person_rounded, color: Colors.white),
               ),
             ],
           ),
@@ -139,10 +135,7 @@ class _HomeConteudo extends StatelessWidget {
           const SizedBox(height: 28),
 
           // Dias da semana
-          Text(
-            'Sua semana',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Sua semana', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           _SemanaWidget(isDark: isDark),
 
@@ -181,10 +174,7 @@ class _HomeConteudo extends StatelessWidget {
           const SizedBox(height: 28),
 
           // Próximo treino
-          Text(
-            'Próximo treino',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Próximo treino', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           AnimatedButton(
             onTap: () {
@@ -304,6 +294,78 @@ class _HomeConteudo extends StatelessWidget {
             ),
           ),
 
+          const SizedBox(height: 28),
+
+          // Seção Chad Esponja → Nutrição
+          Text('Nutrição', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          AnimatedButton(
+            onTap: () {
+              mainScreenKey.currentState?.trocarAba(4);
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF059669).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: const Color(0xFF059669).withValues(alpha: 0.4),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/chad_esponja.png',
+                    height: 80,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Plano de dieta',
+                          style: TextStyle(
+                            color: Color(0xFF059669),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Monte sua dieta e acompanhe suas calorias diárias!',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontSize: 12),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF059669),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'Ver nutrição →',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           const SizedBox(height: 32),
         ],
       ),
@@ -313,7 +375,6 @@ class _HomeConteudo extends StatelessWidget {
 
 class _SemanaWidget extends StatelessWidget {
   final bool isDark;
-
   const _SemanaWidget({required this.isDark});
 
   final List<Map<String, dynamic>> dias = const [
