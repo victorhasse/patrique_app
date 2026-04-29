@@ -259,8 +259,14 @@ class _AbaAmigos extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               border: (amigo['online'] as bool)
                   ? Border.all(
-                      color: AppTheme.primary.withValues(alpha: 0.3))
-                  : null,
+                      color: AppTheme.primary.withValues(
+                        alpha: context.isDark ? 0.3 : 0.2),
+                      width: 1.5,)
+                  : Border.all(
+                      color: context.isDark
+                          ? Colors.transparent
+                          : const Color(0xFFEEEEEE),
+                  )
             ),
             child: Row(
               children: [
@@ -777,8 +783,11 @@ class _PillInfo extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.primary.withValues(alpha: 0.1),
+        color: Colors.transparent,    
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppTheme.primary.withValues(alpha: 0.4),
+        ),
       ),
       child: Text(
         texto,

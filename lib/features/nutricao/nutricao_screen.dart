@@ -624,7 +624,7 @@ class _AbaHoje extends StatelessWidget {
             );
           }),
 
-          const SizedBox(height: 80),
+          const SizedBox(height: 120),
         ],
       ),
     );
@@ -781,6 +781,9 @@ class _CardMacro extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.cardColor,
         borderRadius: BorderRadius.circular(14),
+        border: context.isDark
+          ? null
+          : Border.all(color: cor.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
