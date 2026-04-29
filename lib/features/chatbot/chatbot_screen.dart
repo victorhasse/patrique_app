@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../core/theme_utils.dart';
+import 'chatbot_service.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -12,109 +15,130 @@ class ChatbotScreen extends StatefulWidget {
 class _ChatbotScreenState extends State<ChatbotScreen> {
   final _mensagemController = TextEditingController();
   final _scrollController = ScrollController();
+  final ChatbotService _service = ChatbotService.instance;
+  bool _loading = false;
+  String? _userEmail;
 
   final List<Map<String, dynamic>> _mensagens = [
     {
-      'texto': 'Olá! Eu sou o PatriqueBot 💪\nComo posso te ajudar hoje?',
+      'texto': 'Olá! Eu sou o PatriqueBot.\nComo posso te ajudar hoje?',
       'isBot': true,
     },
   ];
 
-  // Árvore de decisões
-  final Map<String, dynamic> _arvore = {
+  final Map<String, dynamic> _fallbackTree = {
     'inicio': {
       'mensagem': 'Escolha uma opção abaixo:',
-      'opcoes': ['🏋️ Dúvidas sobre treino', '🥗 Nutrição', '😴 Descanso e recuperação', '📊 Acompanhamento'],
-    },
-    '🏋️ Dúvidas sobre treino': {
-      'mensagem': 'Qual sua dúvida sobre treino?',
-      'opcoes': ['Como montar uma série?', 'Quantas vezes treinar por semana?', 'Como evoluir no treino?'],
-    },
-    '🥗 Nutrição': {
-      'mensagem': 'O que você quer saber sobre nutrição?',
-      'opcoes': ['O que comer antes do treino?', 'O que comer depois do treino?', 'Quanto de proteína por dia?'],
-    },
-    '😴 Descanso e recuperação': {
-      'mensagem': 'O que você quer saber sobre recuperação?',
-      'opcoes': ['Quantas horas dormir?', 'O que é overtraining?', 'Quando posso treinar com dor muscular?'],
-    },
-    '📊 Acompanhamento': {
-      'mensagem': 'O que deseja acompanhar?',
-      'opcoes': ['Ver meu progresso', 'Meus treinos da semana', 'Meu streak atual'],
-    },
-    'Como montar uma série?': {
-      'mensagem': 'Para iniciantes, recomendo:\n\n• 3 séries de 12 repetições\n• Descanso de 60 segundos\n• Foco na técnica antes do peso\n\nQuer saber mais alguma coisa?',
-      'opcoes': ['Voltar ao início', 'Quantas vezes treinar por semana?'],
-    },
-    'Quantas vezes treinar por semana?': {
-      'mensagem': 'Depende do seu nível:\n\n• Iniciante: 3x por semana\n• Intermediário: 4x por semana\n• Avançado: 5-6x por semana\n\nSempre respeitando o descanso!',
-      'opcoes': ['Voltar ao início', 'Como evoluir no treino?'],
-    },
-    'Como evoluir no treino?': {
-      'mensagem': 'A chave é a sobrecarga progressiva:\n\n• Aumente o peso gradualmente\n• Adicione mais repetições\n• Reduza o tempo de descanso\n• Varie os exercícios a cada 4-6 semanas',
-      'opcoes': ['Voltar ao início', 'Quantas vezes treinar por semana?'],
-    },
-    'O que comer antes do treino?': {
-      'mensagem': 'Ideal comer 1-2h antes:\n\n• Carboidratos de fácil digestão\n• Banana com pasta de amendoim\n• Pão integral com ovo\n• Aveia com frutas\n\nEvite gorduras e fibras em excesso!',
-      'opcoes': ['Voltar ao início', 'O que comer depois do treino?'],
-    },
-    'O que comer depois do treino?': {
-      'mensagem': 'Até 1h após o treino:\n\n• Proteína para recuperação muscular\n• Frango com arroz e legumes\n• Atum com batata doce\n• Whey protein com fruta\n\nEsse é o momento mais importante!',
-      'opcoes': ['Voltar ao início', 'Quanto de proteína por dia?'],
-    },
-    'Quanto de proteína por dia?': {
-      'mensagem': 'A recomendação geral é:\n\n• 1.6g a 2.2g por kg de peso corporal\n• Exemplo: 70kg = 112g a 154g/dia\n• Distribua em 4-5 refeições\n\nConsulte um nutricionista para orientação personalizada!',
-      'opcoes': ['Voltar ao início', 'O que comer antes do treino?'],
-    },
-    'Quantas horas dormir?': {
-      'mensagem': 'O sono é fundamental para os resultados:\n\n• Mínimo de 7-8 horas por noite\n• É durante o sono que o músculo cresce\n• Evite telas 1h antes de dormir\n• Mantenha horários regulares',
-      'opcoes': ['Voltar ao início', 'O que é overtraining?'],
-    },
-    'O que é overtraining?': {
-      'mensagem': 'Overtraining é o excesso de treino:\n\n• Queda no desempenho\n• Cansaço excessivo\n• Irritabilidade\n• Dificuldade para dormir\n\nSe identificar esses sinais, descanse por 1 semana!',
-      'opcoes': ['Voltar ao início', 'Quando posso treinar com dor muscular?'],
-    },
-    'Quando posso treinar com dor muscular?': {
-      'mensagem': 'Depende do tipo de dor:\n\n• Dor muscular tardia (DOMS): pode treinar outro grupo muscular\n• Dor articular ou aguda: PARE e descanse\n• Dor leve: ok treinar com intensidade reduzida\n\nSempre ouça seu corpo!',
-      'opcoes': ['Voltar ao início', 'O que é overtraining?'],
-    },
-    'Ver meu progresso': {
-      'mensagem': 'Você está indo muito bem! 🎉\n\n• Streak atual: 7 dias 🔥\n• Treinos esse mês: 18\n• Grupo favorito: Peito e Tríceps\n\nContinue assim!',
-      'opcoes': ['Voltar ao início', 'Meus treinos da semana'],
-    },
-    'Meus treinos da semana': {
-      'mensagem': 'Sua semana até agora:\n\n✅ Segunda — Peito e Tríceps\n✅ Terça — Costas e Bíceps\n✅ Quarta — Pernas\n✅ Quinta — Ombros\n✅ Sexta — Cardio\n⬜ Sábado\n⬜ Domingo',
-      'opcoes': ['Voltar ao início', 'Meu streak atual'],
-    },
-    'Meu streak atual': {
-      'mensagem': '🔥 Seu streak atual é de 7 dias!\n\nVocê está entre os 10% mais consistentes da plataforma. Continue treinando amanhã para manter!',
-      'opcoes': ['Voltar ao início', 'Ver meu progresso'],
+      'opcoes': [
+        'Dúvidas sobre treino',
+        'Nutrição',
+        'Descanso e recuperação',
+        'Acompanhamento',
+      ],
     },
     'Voltar ao início': {
       'mensagem': 'Claro! Como posso te ajudar?',
-      'opcoes': ['🏋️ Dúvidas sobre treino', '🥗 Nutrição', '😴 Descanso e recuperação', '📊 Acompanhamento'],
+      'opcoes': [
+        'Dúvidas sobre treino',
+        'Nutrição',
+        'Descanso e recuperação',
+        'Acompanhamento',
+      ],
     },
   };
 
-  void _responderOpcao(String opcao) {
+  @override
+  void initState() {
+    super.initState();
+    _loadUserAndStart();
+  }
+
+  Future<void> _loadUserAndStart() async {
+    final prefs = await SharedPreferences.getInstance();
+    _userEmail = prefs.getString('user_email');
+    await _responderOpcao('inicio', exibirMensagemUsuario: false);
+  }
+
+  Future<void> _responderOpcao(
+    String opcao, {
+    bool exibirMensagemUsuario = true,
+  }) async {
+    if (_loading) return;
+
+    if (exibirMensagemUsuario) {
+      setState(() {
+        _mensagens.add({'texto': opcao, 'isBot': false});
+      });
+    }
+
     setState(() {
-      // Mensagem do usuário
-      _mensagens.add({'texto': opcao, 'isBot': false});
+      _loading = true;
     });
 
-    Future.delayed(const Duration(milliseconds: 600), () {
-      final resposta = _arvore[opcao];
-      if (resposta != null) {
-        setState(() {
-          _mensagens.add({
-            'texto': resposta['mensagem'],
-            'isBot': true,
-            'opcoes': resposta['opcoes'],
-          });
+    final reply = await _service.reply(option: opcao, email: _userEmail);
+    if (!mounted) return;
+
+    if (reply != null) {
+      setState(() {
+        _mensagens.add({
+          'texto': reply.mensagem,
+          'isBot': true,
+          'opcoes': reply.opcoes,
         });
-      }
+        _loading = false;
+      });
       _rolarParaBaixo();
+      return;
+    }
+
+    final fallback = _fallbackTree[opcao] ?? _fallbackTree['inicio'];
+    setState(() {
+      _mensagens.add({
+        'texto': fallback['mensagem'],
+        'isBot': true,
+        'opcoes': fallback['opcoes'],
+      });
+      _loading = false;
     });
+    _rolarParaBaixo();
+  }
+
+  Future<void> _enviarTextoLivre() async {
+    final texto = _mensagemController.text.trim();
+    if (texto.isEmpty || _loading) return;
+    _mensagemController.clear();
+
+    setState(() {
+      _mensagens.add({'texto': texto, 'isBot': false});
+      _loading = true;
+    });
+
+    final reply = await _service.reply(option: texto, email: _userEmail);
+    if (!mounted) return;
+
+    if (reply != null) {
+      setState(() {
+        _mensagens.add({
+          'texto': reply.mensagem,
+          'isBot': true,
+          'opcoes': reply.opcoes,
+        });
+        _loading = false;
+      });
+      _rolarParaBaixo();
+      return;
+    }
+
+    setState(() {
+      _mensagens.add({
+        'texto':
+            'Não entendi essa opção ainda. Use os botões abaixo para eu te ajudar melhor.',
+        'isBot': true,
+        'opcoes': _fallbackTree['inicio']['opcoes'],
+      });
+      _loading = false;
+    });
+    _rolarParaBaixo();
   }
 
   void _rolarParaBaixo() {
@@ -126,21 +150,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           curve: Curves.easeOut,
         );
       }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Adiciona opções iniciais
-    Future.delayed(const Duration(milliseconds: 400), () {
-      setState(() {
-        _mensagens.add({
-          'texto': 'Escolha uma opção abaixo:',
-          'isBot': true,
-          'opcoes': _arvore['inicio']!['opcoes'],
-        });
-      });
     });
   }
 
@@ -167,17 +176,24 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 color: AppTheme.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.smart_toy_rounded,
-                  color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.smart_toy_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('PatriqueBot',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const Text('Online',
-                    style: TextStyle(color: Colors.green, fontSize: 12)),
+                Text(
+                  'PatriqueBot',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const Text(
+                  'Online',
+                  style: TextStyle(color: Colors.green, fontSize: 12),
+                ),
               ],
             ),
           ],
@@ -185,7 +201,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
       body: Column(
         children: [
-          // Lista de mensagens
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -197,15 +212,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 final opcoes = msg['opcoes'] as List<dynamic>?;
 
                 return Column(
-                  crossAxisAlignment: isBot
-                      ? CrossAxisAlignment.start
-                      : CrossAxisAlignment.end,
+                  crossAxisAlignment:
+                      isBot ? CrossAxisAlignment.start : CrossAxisAlignment.end,
                   children: [
-                    // Bolha de mensagem
                     Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width * 0.75,
                       ),
@@ -221,23 +236,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       child: Text(
                         msg['texto'],
                         style: TextStyle(
-                            color: context.textColor, fontSize: 15, height: 1.4),
+                          color: context.textColor,
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
                       ),
                     ),
-
-                    // Opções de resposta rápida
-                    if (opcoes != null &&
-                        index == _mensagens.length - 1) ...[
+                    if (opcoes != null && index == _mensagens.length - 1) ...[
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
                         children: opcoes.map((opcao) {
                           return GestureDetector(
-                            onTap: () => _responderOpcao(opcao.toString()),
+                            onTap: _loading
+                                ? null
+                                : () => _responderOpcao(opcao.toString()),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppTheme.primary),
                                 borderRadius: BorderRadius.circular(20),
@@ -259,6 +278,40 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   ],
                 );
               },
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _mensagemController,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => _enviarTextoLivre(),
+                      decoration: const InputDecoration(
+                        hintText: 'Digite sua mensagem...',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: _loading ? null : _enviarTextoLivre,
+                    icon: _loading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.send_rounded),
+                    color: AppTheme.primary,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
