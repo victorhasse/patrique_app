@@ -50,7 +50,7 @@ Utilizamos uma paleta moderna e energética para refletir a intensidade dos trei
 ## 🛠️ Tecnologias
 - **Frontend:** Flutter
 
-- **Backend:** 
+- **Backend:** https://github.com/IgorMirandolli/backend_patriquefitness
 
 - **Database:** 
 
