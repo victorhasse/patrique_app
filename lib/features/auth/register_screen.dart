@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../../../main.dart';
+import '../../core/auth_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_transitions.dart';
-import '../../../main.dart';
 import '../../core/theme_utils.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,11 +14,34 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool _emailValido(String email) {
+    if (email.contains(RegExp(r"\s"))) return false;
+
+    final match = RegExp(r'^[^\s@]+@([^\s@]+\.[^\s@]+)$').firstMatch(email);
+    if (match == null) return false;
+
+    final allowedDomains = <String>{
+      'gmail.com',
+      'outlook.com',
+      'hotmail.com',
+      'live.com',
+      'icloud.com',
+      'me.com',
+      'yahoo.com',
+      'proton.me',
+      'protonmail.com',
+    };
+
+    final domain = match.group(1)?.toLowerCase() ?? '';
+    return allowedDomains.contains(domain);
+  }
+
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmarSenhaController = TextEditingController();
   bool _senhaVisivel = false;
+  bool _carregando = false;
 
   @override
   void dispose() {
@@ -27,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _cadastrar() {
+  Future<void> _cadastrar() async {
     if (_nomeController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _senhaController.text.isEmpty ||
@@ -35,6 +60,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Preencha todos os campos'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (!_emailValido(_emailController.text.trim())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'E-mail inválido: use um provedor permitido (gmail, outlook, icloud, etc)',
+          ),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -51,12 +88,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    // Cadastro bem sucedido — vai para o app
+    setState(() => _carregando = true);
+
+    final response = await AuthService.instance.register(
+      nome: _nomeController.text,
+      email: _emailController.text,
+      senha: _senhaController.text,
+    );
+
+    if (!mounted) return;
+    setState(() => _carregando = false);
+
+    if (!response.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     Navigator.pushAndRemoveUntil(
       context,
       AppTransitions.fadeScale(
         MainScreen(key: mainScreenKey),
-        ),
+      ),
       (route) => false,
     );
   }
@@ -68,8 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded,
-              color: context.textColor),
+          icon: Icon(Icons.arrow_back_ios_rounded, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -80,34 +136,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-
-              Text('Criar conta',
-                  style: Theme.of(context).textTheme.headlineMedium),
+              Text(
+                'Criar conta',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               const SizedBox(height: 8),
-              Text('Preencha os dados para começar',
-                  style: Theme.of(context).textTheme.bodyMedium),
-
+              Text(
+                'Preencha os dados para começar',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               const SizedBox(height: 36),
-
-              // Nome
-              Text('Nome completo',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Nome completo',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: _nomeController,
                 textCapitalization: TextCapitalization.words,
                 decoration: InputDecoration(
                   hintText: 'Seu nome',
-                  prefixIcon: Icon(Icons.person_outline_rounded,
-                      color: context.subtitleColor),
+                  prefixIcon: Icon(
+                    Icons.person_outline_rounded,
+                    color: context.subtitleColor,
+                  ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Email
-              Text('E-mail',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text('E-mail', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
@@ -118,25 +174,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Icon(Icons.email_outlined, color: context.subtitleColor),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Senha
-              Text('Senha',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text('Senha', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               TextField(
                 controller: _senhaController,
                 obscureText: !_senhaVisivel,
                 decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon: Icon(Icons.lock_outlined,
-                      color: context.subtitleColor),
+                  prefixIcon:
+                      Icon(Icons.lock_outlined, color: context.subtitleColor),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _senhaVisivel
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                      _senhaVisivel ? Icons.visibility_off : Icons.visibility,
                       color: context.subtitleColor,
                     ),
                     onPressed: () =>
@@ -144,25 +194,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Confirmar senha
-              Text('Confirmar senha',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Confirmar senha',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: _confirmarSenhaController,
                 obscureText: !_senhaVisivel,
                 decoration: InputDecoration(
                   hintText: '••••••••',
-                  prefixIcon: Icon(Icons.lock_outlined,
-                      color: context.subtitleColor),
+                  prefixIcon:
+                      Icon(Icons.lock_outlined, color: context.subtitleColor),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _senhaVisivel
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                      _senhaVisivel ? Icons.visibility_off : Icons.visibility,
                       color: context.subtitleColor,
                     ),
                     onPressed: () =>
@@ -170,18 +217,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 36),
-
-              // Botão cadastrar
               ElevatedButton(
-                onPressed: _cadastrar,
+                onPressed: _carregando ? null : _cadastrar,
                 child: const Text('Cadastrar'),
               ),
-
               const SizedBox(height: 16),
-
-              // Voltar pro login
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -202,7 +243,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 32),
             ],
           ),
