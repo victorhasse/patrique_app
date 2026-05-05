@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 import '../../core/theme/app_theme.dart';
 import '../auth/planos_screen.dart';
 import '../../core/theme/app_transitions.dart';
@@ -8,8 +10,37 @@ import 'editar_perfil_screen.dart';
 import '../../core/theme_controller.dart';
 import '../../core/theme_utils.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
+
+  @override
+  State<PerfilScreen> createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends State<PerfilScreen> {
+  String _nome = 'Usuário';
+  String _email = 'Sem e-mail';
+  String? _fotoPerfilPath;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDadosUsuario();
+  }
+
+  Future<void> _carregarDadosUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    final nome = prefs.getString('user_nome');
+    final email = prefs.getString('user_email');
+
+    if (!mounted) return;
+    setState(() {
+      _nome = (nome != null && nome.trim().isNotEmpty) ? nome : 'Usuário';
+      _email = (email != null && email.trim().isNotEmpty) ? email : 'Sem e-mail';
+      final foto = prefs.getString('user_foto_perfil');
+      _fotoPerfilPath = (foto != null && foto.trim().isNotEmpty) ? foto : null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +64,7 @@ class PerfilScreen extends StatelessWidget {
                           AppTransitions.slideFromRight(
                             const EditarPerfilScreen(),
                           ),
-                        );
+                        ).then((_) => _carregarDadosUsuario());
                       },
                       child: Stack(
                       children: [
@@ -44,11 +75,19 @@ class PerfilScreen extends StatelessWidget {
                             color: AppTheme.primary,
                             borderRadius: BorderRadius.circular(24),
                           ),
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                            size: 50,
-                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: (_fotoPerfilPath != null &&
+                                  _fotoPerfilPath!.isNotEmpty &&
+                                  File(_fotoPerfilPath!).existsSync())
+                              ? Image.file(
+                                  File(_fotoPerfilPath!),
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(
+                                  Icons.person_rounded,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -72,12 +111,12 @@ class PerfilScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Fulano da Silva',
+                      _nome,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'fulano@email.com',
+                      _email,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 12),
@@ -148,7 +187,7 @@ class PerfilScreen extends StatelessWidget {
                         context,
                         AppTransitions.slideFromRight(
                             const EditarPerfilScreen()),
-                      );
+                      ).then((_) => _carregarDadosUsuario());
                     },
                   ),
                   _ItemMenu(
@@ -405,3 +444,4 @@ class _ItemMenu extends StatelessWidget {
     );
   }
 }
+
