@@ -1,9 +1,176 @@
-# Miscellaneous
+# ============================================================
+# FLUTTER / DART
+# ============================================================
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+*.dart.js
+*.dart.snapshot
+.packages
+
+# ============================================================
+# iOS
+# ============================================================
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+*.ipa
+*.dSYM.zip
+*.dSYM
+DerivedData/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+xcuserdata/
+
+# ============================================================
+# ANDROID
+# ============================================================
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/*.keystore
+**/*.jks
+
+# ============================================================
+# MACOS
+# ============================================================
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/Flutter-Debug.xcconfig
+**/macos/Flutter/Flutter-Release.xcconfig
+
+# ============================================================
+# SISTEMA OPERACIONAL
+# ============================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ============================================================
+# EDITORES E IDEs
+# ============================================================
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
 *.class
+
+# JetBrains
+.idea/
+*.swp
+*.swo
+
+# Vim
+*.swp
+*.swo
+Session.vim
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================
+# LOGS E TEMPORÁRIOS
+# ============================================================
 *.log
 *.pyc
-*.swp
-.DS_Store
+*.pyo
+*.tmp
+*.temp
+*.bak
+*.orig
+*.cache
+crash_log.txt
+
+# ============================================================
+# SEGREDOS E CREDENCIAIS
+# ============================================================
+# Firebase
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+
+# Chaves e certificados
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+*.cert
+*.cer
+key.properties
+secrets.dart
+.env
+.env.*
+!.env.example
+
+# API Keys (nunca commitar!)
+**/lib/config/secrets.dart
+**/lib/core/config.dart
+
+# ============================================================
+# BUILD E RELEASE
+# ============================================================
+*.ipa
+*.apk
+*.aab
+*.exe
+*.app
+app.*.symbols
+app.*.map.json
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# ============================================================
+# OUTROS
+# ============================================================
 .atom/
 .build/
 .buildlog/
@@ -11,35 +178,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
+*.class
 .pub/
-/build/
-/coverage/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+coverage/
+lcov.info
