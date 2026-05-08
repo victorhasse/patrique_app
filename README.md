@@ -21,6 +21,8 @@
 
 **Patrique Fitness** is a mobile gym application built with Flutter, developed as both a portfolio project and academic work. The app delivers a gamified experience for workout management, nutrition tracking, and social interaction between users — inspired by Duolingo's engagement mechanics applied to the fitness world.
 
+**Backend repository:** [IgorMirandolli/backend_patriquefitness](https://github.com/IgorMirandolli/backend_patriquefitness)
+
 ---
 
 ## ✨ Features
