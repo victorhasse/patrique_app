@@ -21,6 +21,8 @@
 
 A **Patrique Fitness** é um aplicativo mobile de academia desenvolvido em Flutter, criado como projeto de portfólio e trabalho acadêmico. O app oferece uma experiência gamificada de gerenciamento de treinos, nutrição e interação social entre usuários — inspirado na dinâmica de engajamento do Duolingo aplicada ao mundo fitness.
 
+**Repositório Backend:** [IgorMirandolli/backend_patriquefitness](https://github.com/IgorMirandolli/backend_patriquefitness)
+
 ---
 
 ## ✨ Funcionalidades
