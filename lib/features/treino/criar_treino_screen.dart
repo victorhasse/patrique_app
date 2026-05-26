@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../core/theme_utils.dart';
 
@@ -13,6 +14,20 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
   final _nomeController = TextEditingController();
   final List<Map<String, dynamic>> _exercicios = [];
   Color _corSelecionada = AppTheme.primary;
+
+  int _diasPorSemana = 3;
+  int _diaSelecionado = 1;
+  String _sexoSelecionado = 'Nao informar';
+  String _objetivoSelecionado = 'Hipertrofia';
+
+  final List<int> _diasOpcoes = [2, 3, 4, 5];
+  final List<String> _sexos = ['Nao informar', 'Feminino', 'Masculino'];
+  final List<String> _objetivos = [
+    'Hipertrofia',
+    'Forca',
+    'Emagrecimento',
+    'Resistencia',
+  ];
 
   final List<Color> _cores = [
     AppTheme.primary,
@@ -49,11 +64,429 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
     setState(() => _exercicios.removeAt(index));
   }
 
+  void _gerarTreinoAutomatico() {
+    final nomeSugerido = _nomeSugeridoTreino(_diasPorSemana, _diaSelecionado);
+    final parametros = _parametrosPorObjetivo(_objetivoSelecionado);
+    final base = _templateBasePorDia(_diasPorSemana, _diaSelecionado);
+    final ajustadoSexo = _ajustarPorSexo(base, _sexoSelecionado);
+
+    final exerciciosGerados = ajustadoSexo.map((ex) {
+      return <String, dynamic>{
+        'nome': ex.nome,
+        'descricao': ex.descricao,
+        'series': parametros.series,
+        'repeticoes': parametros.repeticoes,
+        'carga': parametros.cargaSugerida,
+        'intervalo': parametros.intervaloMin,
+        'videoId': ex.videoId,
+      };
+    }).toList();
+
+    setState(() {
+      _nomeController.text = nomeSugerido;
+      _corSelecionada = _cores[(_diaSelecionado - 1) % _cores.length];
+      _exercicios
+        ..clear()
+        ..addAll(exerciciosGerados);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Treino automatico gerado com sucesso!'),
+        backgroundColor: AppTheme.primary,
+      ),
+    );
+  }
+
+  List<_ExercicioBase> _templateBasePorDia(int dias, int dia) {
+    switch (dias) {
+      case 2:
+        if (dia == 1) {
+          return const [
+            _ExercicioBase(
+              nome: 'Agachamento Livre',
+              descricao: 'Trabalha quadriceps, gluteos e core.',
+              videoId: 'ultWZbUMPL8',
+            ),
+            _ExercicioBase(
+              nome: 'Supino Reto',
+              descricao: 'Exercicio composto para peito e triceps.',
+              videoId: 'rT7DgCr-3pg',
+            ),
+            _ExercicioBase(
+              nome: 'Remada Curvada',
+              descricao: 'Foco em costas e estabilidade de tronco.',
+              videoId: 'kBWAon7ItDw',
+            ),
+            _ExercicioBase(
+              nome: 'Desenvolvimento',
+              descricao: 'Fortalece ombros e triceps.',
+              videoId: 'qEwKCR5JCog',
+            ),
+            _ExercicioBase(
+              nome: 'Prancha',
+              descricao: 'Fortalecimento de core e postura.',
+              videoId: 'ASdvN_XEl_c',
+            ),
+          ];
+        }
+        return const [
+          _ExercicioBase(
+            nome: 'Levantamento Terra Romeno',
+            descricao: 'Posterior de coxa, gluteos e lombar.',
+            videoId: '2SHsk9AzdjA',
+          ),
+          _ExercicioBase(
+            nome: 'Puxada Frontal',
+            descricao: 'Costas e biceps.',
+            videoId: 'CAwf7n6Luuc',
+          ),
+          _ExercicioBase(
+            nome: 'Leg Press',
+            descricao: 'Trabalho de pernas com alta estabilidade.',
+            videoId: 'IZxyjW7MPJQ',
+          ),
+          _ExercicioBase(
+            nome: 'Flexao de Braco',
+            descricao: 'Peito, ombros e triceps com peso corporal.',
+            videoId: 'IODxDxX7oi4',
+          ),
+          _ExercicioBase(
+            nome: 'Panturrilha em Pe',
+            descricao: 'Fortalecimento de gastrocnemio e soleo.',
+            videoId: 'gwLzBJYoWlI',
+          ),
+        ];
+      case 3:
+        if (dia == 1) {
+          return const [
+            _ExercicioBase(
+              nome: 'Supino Reto',
+              descricao: 'Principal composto para peitoral.',
+              videoId: 'rT7DgCr-3pg',
+            ),
+            _ExercicioBase(
+              nome: 'Supino Inclinado',
+              descricao: 'Enfase na porcao superior do peitoral.',
+              videoId: 'DbFgADa2PL8',
+            ),
+            _ExercicioBase(
+              nome: 'Desenvolvimento',
+              descricao: 'Ombros e triceps.',
+              videoId: 'qEwKCR5JCog',
+            ),
+            _ExercicioBase(
+              nome: 'Elevacao Lateral',
+              descricao: 'Isolamento de deltoide lateral.',
+              videoId: '3VcKaXpzqRo',
+            ),
+            _ExercicioBase(
+              nome: 'Triceps Pulley',
+              descricao: 'Isolamento de triceps.',
+              videoId: '2-LAMcpzODU',
+            ),
+          ];
+        }
+        if (dia == 2) {
+          return const [
+            _ExercicioBase(
+              nome: 'Puxada Frontal',
+              descricao: 'Costas e biceps.',
+              videoId: 'CAwf7n6Luuc',
+            ),
+            _ExercicioBase(
+              nome: 'Remada Curvada',
+              descricao: 'Costas com alta ativacao de dorsais.',
+              videoId: 'kBWAon7ItDw',
+            ),
+            _ExercicioBase(
+              nome: 'Remada Unilateral',
+              descricao: 'Correcao de assimetrias entre lados.',
+              videoId: 'pYcpY20QaE8',
+            ),
+            _ExercicioBase(
+              nome: 'Rosca Direta',
+              descricao: 'Biceps braquial.',
+              videoId: 'ykJmrZ5v0Oo',
+            ),
+            _ExercicioBase(
+              nome: 'Rosca Martelo',
+              descricao: 'Biceps e antebraco.',
+              videoId: 'zC3nLlEvin4',
+            ),
+          ];
+        }
+        return const [
+          _ExercicioBase(
+            nome: 'Agachamento Livre',
+            descricao: 'Base de forca para membros inferiores.',
+            videoId: 'ultWZbUMPL8',
+          ),
+          _ExercicioBase(
+            nome: 'Leg Press',
+            descricao: 'Volume de quadriceps e gluteos.',
+            videoId: 'IZxyjW7MPJQ',
+          ),
+          _ExercicioBase(
+            nome: 'Cadeira Extensora',
+            descricao: 'Isolamento de quadriceps.',
+            videoId: 'YyvSfVjQeL0',
+          ),
+          _ExercicioBase(
+            nome: 'Mesa Flexora',
+            descricao: 'Posterior de coxa.',
+            videoId: '1Tq3QdYUuHs',
+          ),
+          _ExercicioBase(
+            nome: 'Panturrilha em Pe',
+            descricao: 'Fortalecimento de panturrilhas.',
+            videoId: 'gwLzBJYoWlI',
+          ),
+        ];
+      case 4:
+        if (dia == 1) {
+          return const [
+            _ExercicioBase(
+              nome: 'Supino Reto',
+              descricao: 'Peitoral e triceps.',
+              videoId: 'rT7DgCr-3pg',
+            ),
+            _ExercicioBase(
+              nome: 'Remada Curvada',
+              descricao: 'Costas e estabilizadores.',
+              videoId: 'kBWAon7ItDw',
+            ),
+            _ExercicioBase(
+              nome: 'Desenvolvimento',
+              descricao: 'Forca de ombros.',
+              videoId: 'qEwKCR5JCog',
+            ),
+            _ExercicioBase(
+              nome: 'Puxada Frontal',
+              descricao: 'Dorsais e biceps.',
+              videoId: 'CAwf7n6Luuc',
+            ),
+            _ExercicioBase(
+              nome: 'Triceps Pulley',
+              descricao: 'Acabamento de triceps.',
+              videoId: '2-LAMcpzODU',
+            ),
+            _ExercicioBase(
+              nome: 'Rosca Direta',
+              descricao: 'Acabamento de biceps.',
+              videoId: 'ykJmrZ5v0Oo',
+            ),
+          ];
+        }
+        if (dia == 2) {
+          return const [
+            _ExercicioBase(
+              nome: 'Agachamento Livre',
+              descricao: 'Principal composto de pernas.',
+              videoId: 'ultWZbUMPL8',
+            ),
+            _ExercicioBase(
+              nome: 'Leg Press',
+              descricao: 'Volume de quadriceps e gluteos.',
+              videoId: 'IZxyjW7MPJQ',
+            ),
+            _ExercicioBase(
+              nome: 'Levantamento Terra Romeno',
+              descricao: 'Posterior de coxa e gluteos.',
+              videoId: '2SHsk9AzdjA',
+            ),
+            _ExercicioBase(
+              nome: 'Cadeira Extensora',
+              descricao: 'Isolamento de quadriceps.',
+              videoId: 'YyvSfVjQeL0',
+            ),
+            _ExercicioBase(
+              nome: 'Panturrilha em Pe',
+              descricao: 'Panturrilhas.',
+              videoId: 'gwLzBJYoWlI',
+            ),
+          ];
+        }
+        if (dia == 3) {
+          return const [
+            _ExercicioBase(
+              nome: 'Supino Inclinado',
+              descricao: 'Enfase em peitoral superior.',
+              videoId: 'DbFgADa2PL8',
+            ),
+            _ExercicioBase(
+              nome: 'Remada Unilateral',
+              descricao: 'Melhora equilibrio entre lados.',
+              videoId: 'pYcpY20QaE8',
+            ),
+            _ExercicioBase(
+              nome: 'Face Pull',
+              descricao: 'Saude de ombros e postura.',
+              videoId: 'rep-qVOkqgk',
+            ),
+            _ExercicioBase(
+              nome: 'Elevacao Lateral',
+              descricao: 'Deltoide lateral.',
+              videoId: '3VcKaXpzqRo',
+            ),
+            _ExercicioBase(
+              nome: 'Triceps Frances',
+              descricao: 'Isolamento de triceps.',
+              videoId: 'VdVfKti0vzw',
+            ),
+            _ExercicioBase(
+              nome: 'Rosca Martelo',
+              descricao: 'Biceps e antebraco.',
+              videoId: 'zC3nLlEvin4',
+            ),
+          ];
+        }
+        return const [
+          _ExercicioBase(
+            nome: 'Levantamento Terra Romeno',
+            descricao: 'Posterior de coxa e gluteos.',
+            videoId: '2SHsk9AzdjA',
+          ),
+          _ExercicioBase(
+            nome: 'Afundo',
+            descricao: 'Unilateral para forca e estabilidade.',
+            videoId: 'QOVaHwm-Q6U',
+          ),
+          _ExercicioBase(
+            nome: 'Hip Thrust',
+            descricao: 'Enfase em gluteos.',
+            videoId: 'LM8XHLYJoYs',
+          ),
+          _ExercicioBase(
+            nome: 'Mesa Flexora',
+            descricao: 'Posterior de coxa.',
+            videoId: '1Tq3QdYUuHs',
+          ),
+          _ExercicioBase(
+            nome: 'Panturrilha Sentado',
+            descricao: 'Panturrilha com foco em soleo.',
+            videoId: 'YMmgqO8Jo-k',
+          ),
+        ];
+      default:
+        if (dia == 1) {
+          return _templateBasePorDia(3, 1);
+        }
+        if (dia == 2) {
+          return _templateBasePorDia(3, 2);
+        }
+        if (dia == 3) {
+          return _templateBasePorDia(3, 3);
+        }
+        if (dia == 4) {
+          return _templateBasePorDia(4, 1);
+        }
+        return _templateBasePorDia(4, 2);
+    }
+  }
+
+  List<_ExercicioBase> _ajustarPorSexo(
+    List<_ExercicioBase> base,
+    String sexo,
+  ) {
+    final copy = List<_ExercicioBase>.from(base);
+    final nomes = copy.map((e) => e.nome).toSet();
+    final lowerDay = copy.any((e) =>
+        e.nome.contains('Agachamento') ||
+        e.nome.contains('Leg Press') ||
+        e.nome.contains('Flexora') ||
+        e.nome.contains('Afundo') ||
+        e.nome.contains('Hip Thrust'));
+
+    if (sexo == 'Feminino' && lowerDay && !nomes.contains('Cadeira Abdutora')) {
+      copy.add(const _ExercicioBase(
+        nome: 'Cadeira Abdutora',
+        descricao: 'Enfase em gluteo medio e estabilidade de quadril.',
+        videoId: 'G_8LItOiZ0Q',
+      ));
+    }
+
+    if (sexo == 'Masculino' && !lowerDay && !nomes.contains('Barra Fixa')) {
+      copy.add(const _ExercicioBase(
+        nome: 'Barra Fixa',
+        descricao: 'Composto para dorsais, biceps e core.',
+        videoId: 'eGo4IYlbE5g',
+      ));
+    }
+
+    return copy;
+  }
+
+  _ParametrosObjetivo _parametrosPorObjetivo(String objetivo) {
+    switch (objetivo) {
+      case 'Forca':
+        return const _ParametrosObjetivo(
+          series: 5,
+          repeticoes: '4-6',
+          intervaloMin: 3,
+          cargaSugerida: '80-90% 1RM',
+        );
+      case 'Emagrecimento':
+        return const _ParametrosObjetivo(
+          series: 3,
+          repeticoes: '12-15',
+          intervaloMin: 1,
+          cargaSugerida: '55-70% 1RM',
+        );
+      case 'Resistencia':
+        return const _ParametrosObjetivo(
+          series: 3,
+          repeticoes: '15-20',
+          intervaloMin: 1,
+          cargaSugerida: '50-65% 1RM',
+        );
+      default:
+        return const _ParametrosObjetivo(
+          series: 4,
+          repeticoes: '8-12',
+          intervaloMin: 2,
+          cargaSugerida: '65-80% 1RM',
+        );
+    }
+  }
+
+  String _nomeSugeridoTreino(int dias, int dia) {
+    String baseNome;
+    if (dias == 2) {
+      baseNome = dia == 1 ? 'Full Body A' : 'Full Body B';
+    } else if (dias == 3) {
+      baseNome = dia == 1
+          ? 'Push'
+          : dia == 2
+              ? 'Pull'
+              : 'Legs';
+    } else if (dias == 4) {
+      baseNome = dia == 1
+          ? 'Upper A'
+          : dia == 2
+              ? 'Lower A'
+              : dia == 3
+                  ? 'Upper B'
+                  : 'Lower B';
+    } else {
+      baseNome = dia == 1
+          ? 'Push'
+          : dia == 2
+              ? 'Pull'
+              : dia == 3
+                  ? 'Legs'
+                  : dia == 4
+                      ? 'Upper'
+                      : 'Lower';
+    }
+    return '$baseNome - $_objetivoSelecionado';
+  }
+
   void _salvarTreino() {
-    if (_nomeController.text.isEmpty) {
+    if (_nomeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Dê um nome para o treino!'),
+          content: Text('De um nome para o treino!'),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -63,20 +496,22 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
     if (_exercicios.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Adicione pelo menos um exercício!'),
+          content: Text('Adicione pelo menos um exercicio!'),
           backgroundColor: Colors.redAccent,
         ),
       );
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Treino criado com sucesso!'),
-        backgroundColor: AppTheme.primary,
-      ),
-    );
-    Navigator.pop(context);
+    Navigator.pop(context, {
+      'titulo': _nomeController.text.trim(),
+      'cor': _corSelecionada,
+      'exercicios': List<Map<String, dynamic>>.from(_exercicios),
+      'diasPorSemana': _diasPorSemana,
+      'diaSelecionado': _diaSelecionado,
+      'sexo': _sexoSelecionado,
+      'objetivo': _objetivoSelecionado,
+    });
   }
 
   @override
@@ -86,12 +521,13 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
         backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: AppTheme.primary),
+          icon: const Icon(
+            Icons.arrow_back_ios_rounded,
+            color: AppTheme.primary,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Novo treino',
-            style: Theme.of(context).textTheme.titleLarge),
+        title: Text('Novo treino', style: Theme.of(context).textTheme.titleLarge),
         actions: [
           TextButton(
             onPressed: _salvarTreino,
@@ -111,25 +547,126 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Nome do treino
-            Text('Nome do treino',
-                style: Theme.of(context).textTheme.titleLarge),
+            Text('Nome do treino', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             TextField(
               controller: _nomeController,
               textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
-                hintText: 'Ex: Peito e Tríceps',
-                prefixIcon: Icon(Icons.fitness_center_rounded,
-                    color: AppTheme.grey),
+                hintText: 'Ex: Push - Hipertrofia',
+                prefixIcon: Icon(
+                  Icons.fitness_center_rounded,
+                  color: AppTheme.grey,
+                ),
               ),
             ),
-
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.cardColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Geracao automatica',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<int>(
+                    value: _diasPorSemana,
+                    decoration: const InputDecoration(
+                      labelText: 'Dias de treino por semana',
+                    ),
+                    items: _diasOpcoes
+                        .map(
+                          (dias) => DropdownMenuItem<int>(
+                            value: dias,
+                            child: Text('$dias dias'),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        _diasPorSemana = value;
+                        if (_diaSelecionado > _diasPorSemana) {
+                          _diaSelecionado = _diasPorSemana;
+                        }
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<int>(
+                    value: _diaSelecionado,
+                    decoration: const InputDecoration(
+                      labelText: 'Dia do plano semanal',
+                    ),
+                    items: List.generate(_diasPorSemana, (index) => index + 1)
+                        .map(
+                          (dia) => DropdownMenuItem<int>(
+                            value: dia,
+                            child: Text('Dia $dia'),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => _diaSelecionado = value);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: _sexoSelecionado,
+                    decoration: const InputDecoration(
+                      labelText: 'Sexo',
+                    ),
+                    items: _sexos
+                        .map(
+                          (sexo) => DropdownMenuItem<String>(
+                            value: sexo,
+                            child: Text(sexo),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => _sexoSelecionado = value);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: _objetivoSelecionado,
+                    decoration: const InputDecoration(
+                      labelText: 'Objetivo',
+                    ),
+                    items: _objetivos
+                        .map(
+                          (objetivo) => DropdownMenuItem<String>(
+                            value: objetivo,
+                            child: Text(objetivo),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => _objetivoSelecionado = value);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _gerarTreinoAutomatico,
+                    icon: const Icon(Icons.auto_awesome_rounded),
+                    label: const Text('Gerar treino automatico'),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 32),
-
-            // Cor do treino
-            Text('Cor do treino',
-                style: Theme.of(context).textTheme.titleLarge),
+            Text('Cor do treino', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             Row(
               children: _cores.map((cor) {
@@ -144,31 +681,24 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
                     decoration: BoxDecoration(
                       color: cor,
                       shape: BoxShape.circle,
-                      border: selecionada
-                          ? Border.all(color: Colors.white, width: 2)
-                          : null,
+                      border:
+                          selecionada ? Border.all(color: Colors.white, width: 2) : null,
                     ),
                     child: selecionada
-                        ? const Icon(Icons.check_rounded,
-                            color: Colors.white, size: 18)
+                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
                         : null,
                   ),
                 );
               }).toList(),
             ),
-
             const SizedBox(height: 32),
-
-            // Exercícios
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Exercícios',
-                    style: Theme.of(context).textTheme.titleLarge),
+                Text('Exercicios', style: Theme.of(context).textTheme.titleLarge),
                 TextButton.icon(
                   onPressed: _adicionarExercicio,
-                  icon: const Icon(Icons.add_rounded,
-                      color: AppTheme.primary, size: 20),
+                  icon: const Icon(Icons.add_rounded, color: AppTheme.primary, size: 20),
                   label: const Text(
                     'Adicionar',
                     style: TextStyle(color: AppTheme.primary),
@@ -177,8 +707,6 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
               ],
             ),
             const SizedBox(height: 12),
-
-            // Lista de exercícios
             if (_exercicios.isEmpty)
               Container(
                 width: double.infinity,
@@ -193,16 +721,15 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
                 ),
                 child: Column(
                   children: [
-                    Icon(Icons.add_circle_outline_rounded,
-                        color: AppTheme.grey, size: 48),
+                    const Icon(Icons.add_circle_outline_rounded, color: AppTheme.grey, size: 48),
                     const SizedBox(height: 12),
                     Text(
-                      'Nenhum exercício ainda',
+                      'Nenhum exercicio ainda',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Toque em "Adicionar" para incluir exercícios',
+                      'Use "Gerar treino automatico" ou toque em "Adicionar".',
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -233,7 +760,6 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
                     ),
                     child: Row(
                       children: [
-                        // Número
                         Container(
                           width: 36,
                           height: 36,
@@ -252,45 +778,34 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        // Infos
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                ex['nome'],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium,
-                              ),
+                              Text(ex['nome'], style: Theme.of(context).textTheme.titleMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '${ex['series']}x${ex['repeticoes']}  •  ${ex['carga']}  •  ${ex['intervalo']}min',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
                           ),
                         ),
-                        // Deletar
                         IconButton(
                           onPressed: () => _removerExercicio(index),
-                          icon: const Icon(Icons.delete_outline_rounded,
-                              color: Colors.redAccent, size: 20),
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.redAccent,
+                            size: 20,
+                          ),
                         ),
-                        // Arrastar
-                        const Icon(Icons.drag_handle_rounded,
-                            color: AppTheme.grey, size: 20),
+                        const Icon(Icons.drag_handle_rounded, color: AppTheme.grey, size: 20),
                       ],
                     ),
                   );
                 },
               ),
-
             const SizedBox(height: 24),
-
-            // Botão salvar
             ElevatedButton(
               onPressed: _salvarTreino,
               style: ElevatedButton.styleFrom(
@@ -298,7 +813,6 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
               ),
               child: const Text('Salvar treino'),
             ),
-
             const SizedBox(height: 32),
           ],
         ),
@@ -307,7 +821,6 @@ class _CriarTreinoScreenState extends State<CriarTreinoScreen> {
   }
 }
 
-// Modal para adicionar exercício
 class _ModalExercicio extends StatefulWidget {
   final Function(Map<String, dynamic>) onAdicionar;
 
@@ -334,10 +847,10 @@ class _ModalExercicioState extends State<_ModalExercicio> {
   }
 
   void _adicionar() {
-    if (_nomeController.text.isEmpty) {
+    if (_nomeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Digite o nome do exercício!'),
+          content: Text('Digite o nome do exercicio!'),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -345,13 +858,13 @@ class _ModalExercicioState extends State<_ModalExercicio> {
     }
 
     widget.onAdicionar({
-      'nome': _nomeController.text,
-      'descricao': _descricaoController.text.isEmpty
+      'nome': _nomeController.text.trim(),
+      'descricao': _descricaoController.text.trim().isEmpty
           ? 'Execute o movimento com controle e foco na musculatura alvo.'
-          : _descricaoController.text,
+          : _descricaoController.text.trim(),
       'series': _series,
       'repeticoes': '$_repeticoes',
-      'carga': _cargaController.text,
+      'carga': _cargaController.text.trim().isEmpty ? 'Carga livre' : _cargaController.text.trim(),
       'intervalo': _intervalo,
       'videoId': 'dQw4w9WgXcQ',
     });
@@ -373,7 +886,6 @@ class _ModalExercicioState extends State<_ModalExercicio> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Handle
             Center(
               child: Container(
                 width: 40,
@@ -385,89 +897,62 @@ class _ModalExercicioState extends State<_ModalExercicio> {
               ),
             ),
             const SizedBox(height: 20),
-
-            Text('Adicionar exercício',
-                style: Theme.of(context).textTheme.titleLarge),
+            Text('Adicionar exercicio', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 20),
-
-            // Nome
             TextField(
               controller: _nomeController,
               textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
-                hintText: 'Nome do exercício',
-                prefixIcon: Icon(Icons.fitness_center_rounded,
-                    color: AppTheme.grey),
+                hintText: 'Nome do exercicio',
+                prefixIcon: Icon(Icons.fitness_center_rounded, color: AppTheme.grey),
               ),
             ),
-
             const SizedBox(height: 12),
-
-            // Descrição
             TextField(
               controller: _descricaoController,
               decoration: const InputDecoration(
-                hintText: 'Descrição (opcional)',
-                prefixIcon:
-                    Icon(Icons.description_outlined, color: AppTheme.grey),
+                hintText: 'Descricao (opcional)',
+                prefixIcon: Icon(Icons.description_outlined, color: AppTheme.grey),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Séries
             _Contador(
-              label: 'Séries',
+              label: 'Series',
               valor: _series,
-              onMenos: () =>
-                  setState(() => _series = (_series - 1).clamp(1, 10)),
-              onMais: () =>
-                  setState(() => _series = (_series + 1).clamp(1, 10)),
+              onMenos: () => setState(() => _series = (_series - 1).clamp(1, 10)),
+              onMais: () => setState(() => _series = (_series + 1).clamp(1, 10)),
             ),
-
             const SizedBox(height: 12),
-
-            // Repetições
             _Contador(
-              label: 'Repetições',
+              label: 'Repeticoes',
               valor: _repeticoes,
-              onMenos: () => setState(
-                  () => _repeticoes = (_repeticoes - 1).clamp(1, 50)),
-              onMais: () => setState(
-                  () => _repeticoes = (_repeticoes + 1).clamp(1, 50)),
+              onMenos: () =>
+                  setState(() => _repeticoes = (_repeticoes - 1).clamp(1, 50)),
+              onMais: () =>
+                  setState(() => _repeticoes = (_repeticoes + 1).clamp(1, 50)),
             ),
-
             const SizedBox(height: 12),
-
-            // Intervalo
             _Contador(
               label: 'Intervalo (min)',
               valor: _intervalo,
-              onMenos: () => setState(
-                  () => _intervalo = (_intervalo - 1).clamp(1, 10)),
-              onMais: () => setState(
-                  () => _intervalo = (_intervalo + 1).clamp(1, 10)),
+              onMenos: () =>
+                  setState(() => _intervalo = (_intervalo - 1).clamp(1, 10)),
+              onMais: () =>
+                  setState(() => _intervalo = (_intervalo + 1).clamp(1, 10)),
             ),
-
             const SizedBox(height: 12),
-
-            // Carga
             TextField(
               controller: _cargaController,
               decoration: const InputDecoration(
                 hintText: 'Carga (ex: 20kg, Peso corporal)',
-                prefixIcon: Icon(Icons.monitor_weight_outlined,
-                    color: AppTheme.grey),
+                prefixIcon: Icon(Icons.monitor_weight_outlined, color: AppTheme.grey),
               ),
             ),
-
             const SizedBox(height: 24),
-
             ElevatedButton(
               onPressed: _adicionar,
-              child: const Text('Adicionar exercício'),
+              child: const Text('Adicionar exercicio'),
             ),
-
             const SizedBox(height: 32),
           ],
         ),
@@ -500,13 +985,11 @@ class _Contador extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label,
-                style: Theme.of(context).textTheme.bodyLarge),
+            child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
           ),
           IconButton(
             onPressed: onMenos,
-            icon: const Icon(Icons.remove_circle_outline_rounded,
-                color: AppTheme.primary),
+            icon: const Icon(Icons.remove_circle_outline_rounded, color: AppTheme.primary),
           ),
           SizedBox(
             width: 32,
@@ -522,11 +1005,36 @@ class _Contador extends StatelessWidget {
           ),
           IconButton(
             onPressed: onMais,
-            icon: const Icon(Icons.add_circle_outline_rounded,
-                color: AppTheme.primary),
+            icon: const Icon(Icons.add_circle_outline_rounded, color: AppTheme.primary),
           ),
         ],
       ),
     );
   }
+}
+
+class _ExercicioBase {
+  final String nome;
+  final String descricao;
+  final String videoId;
+
+  const _ExercicioBase({
+    required this.nome,
+    required this.descricao,
+    required this.videoId,
+  });
+}
+
+class _ParametrosObjetivo {
+  final int series;
+  final String repeticoes;
+  final int intervaloMin;
+  final String cargaSugerida;
+
+  const _ParametrosObjetivo({
+    required this.series,
+    required this.repeticoes,
+    required this.intervaloMin,
+    required this.cargaSugerida,
+  });
 }

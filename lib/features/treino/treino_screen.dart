@@ -1,18 +1,29 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/theme/app_theme.dart';
-import 'detalhe_treino_screen.dart';
 import '../../core/theme/app_transitions.dart';
+import '../../core/theme_utils.dart';
 import '../../shared/widgets/animated_button.dart';
 import 'criar_treino_screen.dart';
-import '../../core/theme_utils.dart';
+import 'detalhe_treino_screen.dart';
 
-class TreinoScreen extends StatelessWidget {
+class TreinoScreen extends StatefulWidget {
   const TreinoScreen({super.key});
+
+  @override
+  State<TreinoScreen> createState() => _TreinoScreenState();
+}
+
+class _TreinoScreenState extends State<TreinoScreen> {
+  static const String _storageKey = 'treinos_personalizados_v1';
 
   static final List<Map<String, dynamic>> _treinoA = [
     {
       'nome': 'Supino Reto',
-      'descricao': 'Exercício composto para peitoral maior, deltóide anterior e tríceps.',
+      'descricao': 'Exercicio composto para peitoral maior, deltoide anterior e triceps.',
       'series': 4,
       'repeticoes': '10-12',
       'carga': '60kg',
@@ -21,7 +32,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Supino Inclinado',
-      'descricao': 'Foca na porção superior do peitoral com maior amplitude.',
+      'descricao': 'Foca na porcao superior do peitoral com maior amplitude.',
       'series': 3,
       'repeticoes': '10-12',
       'carga': '50kg',
@@ -30,7 +41,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Crucifixo',
-      'descricao': 'Isolamento do peitoral com movimento de abertura dos braços.',
+      'descricao': 'Isolamento do peitoral com movimento de abertura dos bracos.',
       'series': 3,
       'repeticoes': '12-15',
       'carga': '14kg',
@@ -38,8 +49,8 @@ class TreinoScreen extends StatelessWidget {
       'videoId': 'eozdVDA78K0',
     },
     {
-      'nome': 'Tríceps Pulley',
-      'descricao': 'Isolamento do tríceps com cabo, excelente para definição.',
+      'nome': 'Triceps Pulley',
+      'descricao': 'Isolamento do triceps com cabo.',
       'series': 4,
       'repeticoes': '12-15',
       'carga': '30kg',
@@ -51,7 +62,7 @@ class TreinoScreen extends StatelessWidget {
   static final List<Map<String, dynamic>> _treinoB = [
     {
       'nome': 'Puxada Frontal',
-      'descricao': 'Exercício composto para grande dorsal e bíceps.',
+      'descricao': 'Exercicio composto para grande dorsal e biceps.',
       'series': 4,
       'repeticoes': '10-12',
       'carga': '70kg',
@@ -60,7 +71,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Remada Curvada',
-      'descricao': 'Fortalece o dorsal, romboides e trapézio médio.',
+      'descricao': 'Fortalece dorsal, romboides e trapezio medio.',
       'series': 4,
       'repeticoes': '10-12',
       'carga': '60kg',
@@ -69,7 +80,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Rosca Direta',
-      'descricao': 'Isolamento clássico do bíceps braquial.',
+      'descricao': 'Isolamento classico do biceps braquial.',
       'series': 3,
       'repeticoes': '12-15',
       'carga': '20kg',
@@ -78,7 +89,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Rosca Martelo',
-      'descricao': 'Trabalha bíceps e braquiorradial com pegada neutra.',
+      'descricao': 'Trabalha biceps e braquiorradial com pegada neutra.',
       'series': 3,
       'repeticoes': '12-15',
       'carga': '16kg',
@@ -90,7 +101,7 @@ class TreinoScreen extends StatelessWidget {
   static final List<Map<String, dynamic>> _treinoC = [
     {
       'nome': 'Agachamento Livre',
-      'descricao': 'Rei dos exercícios — quadríceps, glúteos e posterior de coxa.',
+      'descricao': 'Exercicio composto para quadriceps, gluteos e posterior.',
       'series': 4,
       'repeticoes': '8-10',
       'carga': '80kg',
@@ -99,7 +110,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Leg Press',
-      'descricao': 'Fortalece quadríceps e glúteos com menor risco para coluna.',
+      'descricao': 'Fortalece quadriceps e gluteos com menor carga lombar.',
       'series': 4,
       'repeticoes': '12-15',
       'carga': '150kg',
@@ -108,7 +119,7 @@ class TreinoScreen extends StatelessWidget {
     },
     {
       'nome': 'Desenvolvimento',
-      'descricao': 'Exercício composto para deltóides anterior e lateral.',
+      'descricao': 'Exercicio composto para deltoides anterior e lateral.',
       'series': 4,
       'repeticoes': '10-12',
       'carga': '40kg',
@@ -116,8 +127,8 @@ class TreinoScreen extends StatelessWidget {
       'videoId': 'qEwKCR5JCog',
     },
     {
-      'nome': 'Elevação Lateral',
-      'descricao': 'Isolamento do deltóide lateral para ombros mais largos.',
+      'nome': 'Elevacao Lateral',
+      'descricao': 'Isolamento do deltoide lateral.',
       'series': 3,
       'repeticoes': '12-15',
       'carga': '10kg',
@@ -126,16 +137,128 @@ class TreinoScreen extends StatelessWidget {
     },
   ];
 
+  final List<Map<String, dynamic>> _treinosPersonalizados = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarTreinosPersonalizados();
+  }
+
+  Future<void> _carregarTreinosPersonalizados() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_storageKey);
+    if (raw == null || raw.trim().isEmpty) return;
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) return;
+
+      final carregados = <Map<String, dynamic>>[];
+      for (final item in decoded) {
+        if (item is! Map) continue;
+
+        final tituloRaw = item['titulo'];
+        final exerciciosRaw = item['exercicios'];
+        final corRaw = item['cor'];
+
+        if (tituloRaw is! String || tituloRaw.trim().isEmpty) continue;
+        if (exerciciosRaw is! List) continue;
+
+        final exercicios = exerciciosRaw
+            .whereType<Map>()
+            .map((ex) => Map<String, dynamic>.from(ex))
+            .toList();
+        if (exercicios.isEmpty) continue;
+
+        final corValue = corRaw is num ? corRaw.toInt() : AppTheme.primary.value;
+        carregados.add({
+          'titulo': tituloRaw.trim(),
+          'cor': Color(corValue),
+          'exercicios': exercicios,
+        });
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _treinosPersonalizados
+          ..clear()
+          ..addAll(carregados);
+      });
+    } catch (_) {
+      // Mantem a tela funcional mesmo se o dado salvo estiver invalido.
+    }
+  }
+
+  Future<void> _salvarTreinosPersonalizados() async {
+    final prefs = await SharedPreferences.getInstance();
+    final serializavel = _treinosPersonalizados.map((treino) {
+      final cor = treino['cor'] as Color? ?? AppTheme.primary;
+      final exercicios =
+          treino['exercicios'] as List<Map<String, dynamic>>? ?? <Map<String, dynamic>>[];
+      return {
+        'titulo': treino['titulo'],
+        'cor': cor.value,
+        'exercicios': exercicios,
+      };
+    }).toList();
+
+    await prefs.setString(_storageKey, jsonEncode(serializavel));
+  }
+
+  Future<void> _abrirCriadorTreino() async {
+    final resultado = await Navigator.push<Map<String, dynamic>>(
+      context,
+      AppTransitions.slideFromBottom<Map<String, dynamic>>(
+        const CriarTreinoScreen(),
+      ),
+    );
+
+    if (!mounted || resultado == null) return;
+
+    final tituloRaw = resultado['titulo'];
+    final exerciciosRaw = resultado['exercicios'];
+    final corRaw = resultado['cor'];
+
+    if (tituloRaw is! String || tituloRaw.trim().isEmpty) return;
+    if (exerciciosRaw is! List) return;
+
+    final exercicios = exerciciosRaw
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
+    if (exercicios.isEmpty) return;
+
+    final cor = corRaw is Color ? corRaw : AppTheme.primary;
+
+    setState(() {
+      _treinosPersonalizados.add({
+        'titulo': tituloRaw.trim(),
+        'cor': cor,
+        'exercicios': exercicios,
+      });
+    });
+    await _salvarTreinosPersonalizados();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Treino salvo em "Treinos personalizados".'),
+        backgroundColor: AppTheme.primary,
+      ),
+    );
+  }
+
+  String _letraDoTreino(String titulo, int index) {
+    final trimmed = titulo.trim();
+    if (trimmed.isEmpty) return 'P${index + 1}';
+    return trimmed.substring(0, 1).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            AppTransitions.slideFromBottom(const CriarTreinoScreen()),
-          );
-        },
+        onPressed: _abrirCriadorTreino,
         backgroundColor: AppTheme.primary,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: const Text(
@@ -153,15 +276,13 @@ class TreinoScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              Text('Meus Treinos',
-                  style: Theme.of(context).textTheme.headlineMedium),
+              Text('Meus Treinos', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 4),
-              Text('Selecione um treino para começar',
-                  style: Theme.of(context).textTheme.bodyMedium),
-
+              Text(
+                'Selecione um treino para comecar',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               const SizedBox(height: 16),
-
-              // Card Patrique Estrela
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -180,7 +301,7 @@ class TreinoScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
                           Text(
-                            'Bora treinar! 💪',
+                            'Bora treinar!',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -189,7 +310,7 @@ class TreinoScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 6),
                           Text(
-                            'Escolha um treino abaixo e vamos nessa! Sem desculpas hoje!',
+                            'Crie seu treino automatico por dias, objetivo e perfil.',
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 13,
@@ -208,19 +329,17 @@ class TreinoScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
-
               _CardGrupoMuscular(
                 letra: 'A',
-                titulo: 'Peito e Tríceps',
+                titulo: 'Peito e Triceps',
                 exercicios: _treinoA,
                 cor: AppTheme.primary,
               ),
               const SizedBox(height: 16),
               _CardGrupoMuscular(
                 letra: 'B',
-                titulo: 'Costas e Bíceps',
+                titulo: 'Costas e Biceps',
                 exercicios: _treinoB,
                 cor: const Color(0xFF7C3AED),
               ),
@@ -231,6 +350,32 @@ class TreinoScreen extends StatelessWidget {
                 exercicios: _treinoC,
                 cor: const Color(0xFF059669),
               ),
+              if (_treinosPersonalizados.isNotEmpty) ...[
+                const SizedBox(height: 28),
+                Text(
+                  'Treinos personalizados',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 12),
+                ..._treinosPersonalizados.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final treino = entry.value;
+                  final titulo = treino['titulo'] as String;
+                  final cor = treino['cor'] as Color;
+                  final exercicios =
+                      treino['exercicios'] as List<Map<String, dynamic>>;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: _CardGrupoMuscular(
+                      letra: _letraDoTreino(titulo, index),
+                      titulo: titulo,
+                      exercicios: exercicios,
+                      cor: cor,
+                    ),
+                  );
+                }),
+              ],
               const SizedBox(height: 100),
             ],
           ),
@@ -299,11 +444,10 @@ class _CardGrupoMuscular extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(titulo,
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Text(titulo, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 4),
                   Text(
-                    '${exercicios.length} exercícios',
+                    '${exercicios.length} exercicios',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

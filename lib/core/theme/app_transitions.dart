@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppTransitions {
-  // Desliza da direita para esquerda (padrão para navegar para frente)
-  static Route slideFromRight(Widget page) {
-    return PageRouteBuilder(
+  // Desliza da direita para a esquerda.
+  static Route<T> slideFromRight<T>(Widget page) {
+    return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: const Duration(milliseconds: 300),
       reverseTransitionDuration: const Duration(milliseconds: 300),
@@ -23,9 +23,9 @@ class AppTransitions {
     );
   }
 
-  // Desliza de baixo para cima (para modais e telas de conclusão)
-  static Route slideFromBottom(Widget page) {
-    return PageRouteBuilder(
+  // Desliza de baixo para cima.
+  static Route<T> slideFromBottom<T>(Widget page) {
+    return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: const Duration(milliseconds: 400),
       reverseTransitionDuration: const Duration(milliseconds: 300),
@@ -45,9 +45,9 @@ class AppTransitions {
     );
   }
 
-  // Fade com scale (para splash e telas de conclusão)
-  static Route fadeScale(Widget page) {
-    return PageRouteBuilder(
+  // Fade com escala.
+  static Route<T> fadeScale<T>(Widget page) {
+    return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: const Duration(milliseconds: 400),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {

@@ -10,6 +10,12 @@ set(BINARY_NAME "pratique_app")
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)
 
+# Some plugins still use legacy add_custom_command(TARGET ...) arguments.
+# Keep compatibility with newer CMake versions that introduce CMP0175.
+if(POLICY CMP0175)
+  cmake_policy(SET CMP0175 OLD)
+endif()
+
 # Define build configuration option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(IS_MULTICONFIG)
