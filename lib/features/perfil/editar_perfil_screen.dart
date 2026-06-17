@@ -1,8 +1,5 @@
-﻿import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,22 +71,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         .replaceAll('ç', 'c');
   }
 
-  String _toDbObjetivo(String value) {
-    final normalized = _normalizeText(value);
-    if (normalized == 'forca') return 'Força';
-    if (normalized == 'resistencia') return 'Resistência';
-    if (normalized == 'saude geral') return 'Saúde geral';
-    if (normalized == 'emagrecimento') return 'Emagrecimento';
-    return 'Hipertrofia';
-  }
-
-  String _toDbNivel(String value) {
-    final normalized = _normalizeText(value);
-    if (normalized == 'avancado') return 'Avançado';
-    if (normalized == 'intermediario') return 'Intermediário';
-    return 'Iniciante';
-  }
-
   String _toUiObjetivo(String? value) {
     final normalized = _normalizeText(value ?? '');
     if (normalized == 'forca') return 'Força';
@@ -124,53 +105,21 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     setState(() => _carregando = true);
 
     final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('user_email') ?? '';
+    final foto = prefs.getString('user_foto_perfil');
 
-    if (email.isEmpty) {
-      if (!mounted) return;
-      setState(() => _carregando = false);
-      return;
-    }
+    _nomeController.text = prefs.getString('user_nome') ?? 'Usuario Patrique';
+    _emailController.text = prefs.getString('user_email') ?? 'demo@gmail.com';
+    _pesoController.text = prefs.getString('user_peso') ?? '75';
+    _alturaController.text = prefs.getString('user_altura') ?? '175';
+    _fotoPerfilPath = (foto != null && foto.trim().isNotEmpty) ? foto : null;
+    _objetivoSelecionado = _toUiObjetivo(
+      prefs.getString('user_objetivo') ?? 'Hipertrofia',
+    );
+    _nivelSelecionado = _toUiNivel(
+      prefs.getString('user_nivel_experiencia') ?? 'Intermediário',
+    );
 
-    try {
-      final client = HttpClient();
-      final uri = Uri.parse(
-        '${_baseUrl()}/user/profile?email=${Uri.encodeComponent(email)}',
-      );
-      final request = await client.getUrl(uri).timeout(const Duration(seconds: 12));
-      final response = await request.close().timeout(const Duration(seconds: 12));
-      final responseText = await response.transform(utf8.decoder).join();
-      client.close(force: true);
-
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        if (!mounted) return;
-        setState(() => _carregando = false);
-        return;
-      }
-
-      final decoded = jsonDecode(responseText);
-      final user = decoded is Map<String, dynamic> ? decoded['user'] : null;
-      if (user is! Map<String, dynamic>) {
-        if (!mounted) return;
-        setState(() => _carregando = false);
-        return;
-      }
-
-      _nomeController.text = (user['nome'] as String?) ?? '';
-      _emailController.text = (user['email'] as String?) ?? '';
-      _pesoController.text = user['peso'] == null ? '' : '${user['peso']}';
-      _alturaController.text = user['altura'] == null ? '' : '${user['altura']}';
-      _fotoPerfilPath = (user['foto_perfil'] as String?)?.trim().isEmpty == true
-          ? null
-          : user['foto_perfil'] as String?;
-
-      _objetivoSelecionado = _toUiObjetivo(user['objetivo'] as String?);
-      _nivelSelecionado = _toUiNivel(user['nivel_experiencia'] as String?);
-    } catch (_) {
-      // Mantém a tela funcionando mesmo sem resposta do backend.
-    } finally {
-      if (mounted) setState(() => _carregando = false);
-    }
+    if (mounted) setState(() => _carregando = false);
   }
 
   Future<void> _salvar() async {
@@ -187,44 +136,13 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     setState(() => _carregando = true);
 
     try {
-      final client = HttpClient();
-      final uri = Uri.parse('${_baseUrl()}/user/profile');
-      final request = await client.putUrl(uri).timeout(const Duration(seconds: 12));
-      request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
-      request.add(
-        utf8.encode(
-          jsonEncode({
-            'email': _emailController.text.trim(),
-            'nome': _nomeController.text.trim(),
-            'peso': _pesoController.text.trim(),
-            'altura': _alturaController.text.trim(),
-            'objetivo': _toDbObjetivo(_objetivoSelecionado),
-            'nivel_experiencia': _toDbNivel(_nivelSelecionado),
-            'foto_perfil': _fotoPerfilPath,
-          }),
-        ),
-      );
-
-      final response = await request.close().timeout(const Duration(seconds: 12));
-      final responseText = await response.transform(utf8.decoder).join();
-      client.close(force: true);
-
-      final decoded = responseText.isEmpty ? <String, dynamic>{} : jsonDecode(responseText);
-      final json = decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
-
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        final message = (json['message'] as String?) ?? 'Não foi possível salvar o perfil';
-        if (!mounted) return;
-        setState(() => _carregando = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
-        );
-        return;
-      }
-
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_nome', _nomeController.text.trim());
       await prefs.setString('user_email', _emailController.text.trim());
+      await prefs.setString('user_peso', _pesoController.text.trim());
+      await prefs.setString('user_altura', _alturaController.text.trim());
+      await prefs.setString('user_objetivo', _objetivoSelecionado);
+      await prefs.setString('user_nivel_experiencia', _nivelSelecionado);
       await prefs.setString('user_foto_perfil', _fotoPerfilPath ?? '');
 
       if (!mounted) return;
@@ -236,24 +154,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         ),
       );
       Navigator.pop(context);
-    } on TimeoutException {
-      if (!mounted) return;
-      setState(() => _carregando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tempo de conexão esgotado'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-    } on SocketException {
-      if (!mounted) return;
-      setState(() => _carregando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não foi possível conectar ao servidor'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
     } catch (_) {
       if (!mounted) return;
       setState(() => _carregando = false);
@@ -263,24 +163,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
           backgroundColor: Colors.redAccent,
         ),
       );
-    }
-  }
-
-  String _baseUrl() {
-    const envBaseUrl = String.fromEnvironment('API_BASE_URL');
-    if (envBaseUrl.isNotEmpty) {
-      return envBaseUrl;
-    }
-
-    if (kIsWeb) {
-      return 'http://localhost:3000';
-    }
-
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        return 'http://10.0.2.2:3000';
-      default:
-        return 'http://localhost:3000';
     }
   }
 

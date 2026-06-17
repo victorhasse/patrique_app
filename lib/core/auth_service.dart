@@ -131,6 +131,11 @@ class AuthService {
     if (user is Map) {
       final nome = user['nome'];
       final email = user['email'];
+      final fotoPerfil = user['foto_perfil'];
+      final peso = user['peso'];
+      final altura = user['altura'];
+      final objetivo = user['objetivo'];
+      final nivelExperiencia = user['nivel_experiencia'];
 
       if (nome is String && nome.trim().isNotEmpty) {
         await prefs.setString('user_nome', nome.trim());
@@ -138,6 +143,29 @@ class AuthService {
 
       if (email is String && email.trim().isNotEmpty) {
         await prefs.setString('user_email', email.trim());
+      }
+
+      if (fotoPerfil is String) {
+        await prefs.setString('user_foto_perfil', fotoPerfil.trim());
+      }
+
+      if (peso != null) {
+        await prefs.setString('user_peso', '$peso');
+      }
+
+      if (altura != null) {
+        await prefs.setString('user_altura', '$altura');
+      }
+
+      if (objetivo is String && objetivo.trim().isNotEmpty) {
+        await prefs.setString('user_objetivo', objetivo.trim());
+      }
+
+      if (nivelExperiencia is String && nivelExperiencia.trim().isNotEmpty) {
+        await prefs.setString(
+          'user_nivel_experiencia',
+          nivelExperiencia.trim(),
+        );
       }
     }
   }

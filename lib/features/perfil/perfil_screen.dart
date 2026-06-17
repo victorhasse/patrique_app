@@ -18,8 +18,8 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  String _nome = 'Usuário';
-  String _email = 'Sem e-mail';
+  String _nome = 'Usuario Patrique';
+  String _email = 'demo@gmail.com';
   String? _fotoPerfilPath;
 
   @override
@@ -35,8 +35,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
     if (!mounted) return;
     setState(() {
-      _nome = (nome != null && nome.trim().isNotEmpty) ? nome : 'Usuário';
-      _email = (email != null && email.trim().isNotEmpty) ? email : 'Sem e-mail';
+      _nome = (nome != null && nome.trim().isNotEmpty)
+          ? nome
+          : 'Usuario Patrique';
+      _email = (email != null && email.trim().isNotEmpty)
+          ? email
+          : 'demo@gmail.com';
       final foto = prefs.getString('user_foto_perfil');
       _fotoPerfilPath = (foto != null && foto.trim().isNotEmpty) ? foto : null;
     });
