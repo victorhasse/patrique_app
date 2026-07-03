@@ -161,9 +161,11 @@ flutter run
 
 ---
 
-## 📸 Screenshots
+## 🎥 How It Works
 
-> Coming soon
+Click on the screen below to watch the video:
+
+[![Patrique Fitness - GYM APP](https://img.youtube.com/vi/C24XQPWrdmw/maxresdefault.jpg)](https://youtu.be/C24XQPWrdmw)
 
 ---
 
